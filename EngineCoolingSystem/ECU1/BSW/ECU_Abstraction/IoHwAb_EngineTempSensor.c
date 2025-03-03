@@ -1,21 +1,23 @@
 #include "IoHwAb_EngineTempSensor.h"
-#include "Adc.h" // Gọi MCAL để đọc giá trị ADC
+#include "Compiler.h"  // Thêm Compiler.h
+#include "Adc.h"       // Gọi MCAL để đọc giá trị ADC
 #include <stdio.h>
 
-// Biến toàn cục mô phỏng giá trị nhiệt độ động cơ
-static uint16 simulated_engine_temp = 75; // Giá trị nhiệt độ động cơ ban đầu (độ C)
-static uint8 is_initialized = 0;         // Trạng thái khởi tạo
+/* Biến toàn cục mô phỏng */
+STATIC VAR(uint16, IOHWAB_VAR) simulated_engine_temp = 75; // Nhiệt độ ban đầu
+STATIC VAR(uint8, IOHWAB_VAR) is_initialized = 0;          // Trạng thái khởi tạo
 
-// Hàm khởi tạo cảm biến nhiệt độ động cơ
-void IoHwAb_EngineTempSensor_Init(const IoHwAb_EngineTempConfigType* config) {
+/* Hàm khởi tạo cảm biến nhiệt độ động cơ */
+FUNC(void, IOHWAB_CODE) IoHwAb_EngineTempSensor_Init(
+    P2CONST(IoHwAb_EngineTempConfigType, IOHWAB_CONST, AUTOMATIC) config
+) {
     if (config == NULL_PTR) {
-        Det_ReportError(2, 0, 0, IOHWAB_E_PARAM_POINTER); // Báo lỗi AUTOSAR
+        Det_ReportError(2, 0, 0, IOHWAB_E_PARAM_POINTER);
         return;
     }
 
     if (config->isEnabled) {
-        // Mô phỏng khởi tạo bằng cách gọi MCAL (Adc_Init)
-        Adc_ConfigType adc_config = {
+        VAR(Adc_ConfigType, AUTOMATIC) adc_config = {
             config->channel, 1, config->samplingTime, 1 // Rank 1, bật
         };
         Adc_Init(&adc_config);
@@ -28,8 +30,10 @@ void IoHwAb_EngineTempSensor_Init(const IoHwAb_EngineTempConfigType* config) {
     }
 }
 
-// Hàm đọc giá trị nhiệt độ động cơ
-Std_ReturnType IoHwAb_EngineTempSensor_Read(uint16* engineTempValue) {
+/* Hàm đọc giá trị nhiệt độ động cơ */
+FUNC(Std_ReturnType, IOHWAB_CODE) IoHwAb_EngineTempSensor_Read(
+    P2VAR(uint16, IOHWAB_VAR, AUTOMATIC) engineTempValue
+) {
     if (!is_initialized) {
         Det_ReportError(2, 0, 1, IOHWAB_E_NOT_INITIALIZED);
         return IOHWAB_NOT_OK;
@@ -40,10 +44,9 @@ Std_ReturnType IoHwAb_EngineTempSensor_Read(uint16* engineTempValue) {
         return IOHWAB_NOT_OK;
     }
 
-    // Gọi MCAL (Adc) để đọc giá trị từ kênh ADC (mô phỏng)
-    uint16 adc_value;
+    VAR(uint16, AUTOMATIC) adc_value;
     if (Adc_ReadChannel(0, &adc_value) == E_OK) {
-        *engineTempValue = simulated_engine_temp; // Sử dụng giá trị mô phỏng
+        *engineTempValue = simulated_engine_temp;
         printf("IoHwAb: Engine Temperature Read = %d°C\n", *engineTempValue);
         return IOHWAB_OK;
     } else {
@@ -52,8 +55,10 @@ Std_ReturnType IoHwAb_EngineTempSensor_Read(uint16* engineTempValue) {
     }
 }
 
-// Hàm mô phỏng thay đổi giá trị nhiệt độ động cơ (cho mục đích kiểm tra)
-void IoHwAb_EngineTempSensor_SimulateNewTemperature(uint16 new_temp) {
+/* Hàm mô phỏng thay đổi giá trị nhiệt độ động cơ */
+FUNC(void, IOHWAB_CODE) IoHwAb_EngineTempSensor_SimulateNewTemperature(
+    VAR(uint16, IOHWAB_VAR) new_temp
+) {
     simulated_engine_temp = new_temp;
     printf("IoHwAb: Engine Temperature Simulated to %d°C\n", simulated_engine_temp);
 }

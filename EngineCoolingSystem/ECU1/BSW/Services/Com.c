@@ -1,14 +1,17 @@
 #include "Com.h"
+#include "Compiler.h"  // Thêm Compiler.h
 #include <stdio.h>
 
-// Biến toàn cục mô phỏng tín hiệu giao tiếp
-static Com_SignalType shared_signal = {0, 0}; // Giá trị ban đầu: 0, ID 0
-static uint8 is_initialized = 0;              // Trạng thái khởi tạo
+/* Biến toàn cục mô phỏng tín hiệu */
+STATIC VAR(Com_SignalType, COM_VAR) shared_signal = {0, 0};
+STATIC VAR(uint8, COM_VAR) is_initialized = 0;
 
-// Hàm khởi tạo module Com
-void Com_Init(const Com_ConfigType* config) {
+/* Hàm khởi tạo module Com */
+FUNC(void, COM_CODE) Com_Init(
+    P2CONST(Com_ConfigType, COM_CONST, AUTOMATIC) config
+) {
     if (config == NULL_PTR) {
-        Det_ReportError(3, 0, 0, COM_E_PARAM_POINTER); // Báo lỗi AUTOSAR
+        Det_ReportError(3, 0, 0, COM_E_PARAM_POINTER);
         return;
     }
 
@@ -22,8 +25,10 @@ void Com_Init(const Com_ConfigType* config) {
     }
 }
 
-// Hàm gửi tín hiệu giao tiếp (mô phỏng)
-Std_ReturnType Com_SendSignal(Com_SignalType* signal) {
+/* Hàm gửi tín hiệu giao tiếp */
+FUNC(Std_ReturnType, COM_CODE) Com_SendSignal(
+    P2VAR(Com_SignalType, COM_VAR, AUTOMATIC) signal
+) {
     if (!is_initialized) {
         Det_ReportError(3, 0, 1, COM_E_NOT_INITIALIZED);
         return COM_NOT_OK;
@@ -34,15 +39,16 @@ Std_ReturnType Com_SendSignal(Com_SignalType* signal) {
         return COM_NOT_OK;
     }
 
-    // Mô phỏng gửi tín hiệu qua CAN (lưu vào biến toàn cục)
     shared_signal = *signal;
     printf("Com: Sent Signal - ID = %d, Value = %d\n",
            shared_signal.signalId, shared_signal.signalValue);
     return COM_OK;
 }
 
-// Hàm nhận tín hiệu giao tiếp (mô phỏng)
-Std_ReturnType Com_ReceiveSignal(Com_SignalType* signal) {
+/* Hàm nhận tín hiệu giao tiếp */
+FUNC(Std_ReturnType, COM_CODE) Com_ReceiveSignal(
+    P2VAR(Com_SignalType, COM_VAR, AUTOMATIC) signal
+) {
     if (!is_initialized) {
         Det_ReportError(3, 0, 2, COM_E_NOT_INITIALIZED);
         return COM_NOT_OK;
@@ -53,19 +59,18 @@ Std_ReturnType Com_ReceiveSignal(Com_SignalType* signal) {
         return COM_NOT_OK;
     }
 
-    // Mô phỏng nhận tín hiệu từ CAN (đọc từ biến toàn cục)
     *signal = shared_signal;
     printf("Com: Received Signal - ID = %d, Value = %d\n",
            signal->signalId, signal->signalValue);
     return COM_OK;
 }
 
-// Hàm main để kiểm tra (chỉ dùng khi compile riêng)
+/* Hàm main để kiểm tra */
 #ifdef TEST_COM
-int main(void) {
-    Com_ConfigType config = {0, 1, 1}; // Channel 0, Signal ID 1, bật
-    Com_SignalType send_signal = {75, 1}; // Giá trị 75, ID 1
-    Com_SignalType receive_signal;
+FUNC(int, COM_CODE) main(void) {
+    VAR(Com_ConfigType, AUTOMATIC) config = {0, 1, 1};
+    VAR(Com_SignalType, AUTOMATIC) send_signal = {75, 1};
+    VAR(Com_SignalType, AUTOMATIC) receive_signal;
 
     Com_Init(&config);
 

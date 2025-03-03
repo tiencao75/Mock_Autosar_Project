@@ -1,39 +1,48 @@
 #ifndef NVM_H
 #define NVM_H
 
-#include "Std_Types.h" // Bao gồm các kiểu dữ liệu AUTOSAR
-#include "Det.h"       // Báo lỗi phát triển
+#include "Compiler.h"    // Thêm Compiler.h
+#include "Std_Types.h"   // Kiểu dữ liệu chuẩn AUTOSAR
+#include "Det.h"         // Báo lỗi phát triển
 
-// Trạng thái trả về cho Nvm
+/* Trạng thái trả về cho Nvm */
 #define NVM_OK       E_OK
 #define NVM_NOT_OK   E_NOT_OK
 
-// Định nghĩa các mã lỗi cho Nvm
+/* Định nghĩa các mã lỗi */
 #define NVM_E_PARAM_POINTER    0x01U  // Lỗi con trỏ NULL
 #define NVM_E_PARAM_CONFIG     0x02U  // Lỗi cấu hình
 #define NVM_E_NOT_INITIALIZED  0x03U  // Lỗi chưa khởi tạo
 #define NVM_E_PARAM_BLOCK      0x04U  // Lỗi khối dữ liệu không hợp lệ
 
-// Định nghĩa cấu hình cho Nvm
+/* Cấu trúc cấu hình cho Nvm */
 typedef struct {
-    uint8 blockId;       // ID khối dữ liệu trong NVM
-    uint16 blockSize;    // Kích thước khối dữ liệu (bytes)
-    boolean isEnabled;   // Trạng thái bật/tắt
+    VAR(uint8, NVM_VAR) blockId;       // ID khối dữ liệu
+    VAR(uint16, NVM_VAR) blockSize;    // Kích thước khối (bytes)
+    VAR(boolean, NVM_VAR) isEnabled;   // Trạng thái bật/tắt
 } Nvm_ConfigType;
 
-// Định nghĩa kiểu dữ liệu cho khối dữ liệu NVM
+/* Kiểu dữ liệu cho khối dữ liệu NVM */
 typedef struct {
-    uint8* data;         // Dữ liệu lưu trong NVM
-    uint16 length;       // Độ dài dữ liệu
+    P2VAR(uint8, NVM_VAR, AUTOMATIC) data; // Dữ liệu lưu trong NVM
+    VAR(uint16, NVM_VAR) length;           // Độ dài dữ liệu
 } Nvm_DataType;
 
-// Hàm khởi tạo module Nvm
-void Nvm_Init(const Nvm_ConfigType* config);
+/* Khai báo hàm */
+FUNC(void, NVM_CODE) Nvm_Init(
+    P2CONST(Nvm_ConfigType, NVM_CONST, AUTOMATIC) config
+);
 
-// Hàm ghi dữ liệu vào NVM (mô phỏng)
-Std_ReturnType Nvm_WriteBlock(uint8 blockId, const uint8* data, uint16 length);
+FUNC(Std_ReturnType, NVM_CODE) Nvm_WriteBlock(
+    VAR(uint8, NVM_VAR) blockId,
+    P2CONST(uint8, NVM_CONST, AUTOMATIC) data,
+    VAR(uint16, NVM_VAR) length
+);
 
-// Hàm đọc dữ liệu từ NVM (mô phỏng)
-Std_ReturnType Nvm_ReadBlock(uint8 blockId, uint8* data, uint16* length);
+FUNC(Std_ReturnType, NVM_CODE) Nvm_ReadBlock(
+    VAR(uint8, NVM_VAR) blockId,
+    P2VAR(uint8, NVM_VAR, AUTOMATIC) data,
+    P2VAR(uint16, NVM_VAR, AUTOMATIC) length
+);
 
-#endif // NVM_H
+#endif /* NVM_H */

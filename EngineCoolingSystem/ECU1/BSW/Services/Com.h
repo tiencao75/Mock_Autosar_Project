@@ -1,38 +1,43 @@
 #ifndef COM_H
 #define COM_H
 
-#include "Std_Types.h" // Bao gồm các kiểu dữ liệu AUTOSAR
-#include "Det.h"       // Báo lỗi phát triển
+#include "Compiler.h"    // Thêm Compiler.h
+#include "Std_Types.h"   // Kiểu dữ liệu chuẩn AUTOSAR
+#include "Det.h"         // Báo lỗi phát triển
 
-// Trạng thái trả về cho Com
+/* Trạng thái trả về cho Com */
 #define COM_OK       E_OK
 #define COM_NOT_OK   E_NOT_OK
 
-// Định nghĩa các mã lỗi cho Com
+/* Định nghĩa các mã lỗi */
 #define COM_E_PARAM_POINTER    0x01U  // Lỗi con trỏ NULL
 #define COM_E_PARAM_CONFIG     0x02U  // Lỗi cấu hình
 #define COM_E_NOT_INITIALIZED  0x03U  // Lỗi chưa khởi tạo
 
-// Định nghĩa cấu hình cho Com
+/* Cấu trúc cấu hình cho Com */
 typedef struct {
-    uint8 comChannel;    // Kênh giao tiếp (ví dụ: CAN channel)
-    uint8 signalId;      // ID tín hiệu
-    boolean isEnabled;   // Trạng thái bật/tắt
+    VAR(uint8, COM_VAR) comChannel;    // Kênh giao tiếp
+    VAR(uint8, COM_VAR) signalId;      // ID tín hiệu
+    VAR(boolean, COM_VAR) isEnabled;   // Trạng thái bật/tắt
 } Com_ConfigType;
 
-// Định nghĩa kiểu dữ liệu cho tín hiệu giao tiếp
+/* Kiểu dữ liệu cho tín hiệu giao tiếp */
 typedef struct {
-    uint16 signalValue;  // Giá trị tín hiệu (ví dụ: nhiệt độ động cơ)
-    uint8 signalId;      // ID của tín hiệu
+    VAR(uint16, COM_VAR) signalValue;  // Giá trị tín hiệu
+    VAR(uint8, COM_VAR) signalId;      // ID của tín hiệu
 } Com_SignalType;
 
-// Hàm khởi tạo module Com
-void Com_Init(const Com_ConfigType* config);
+/* Khai báo hàm */
+FUNC(void, COM_CODE) Com_Init(
+    P2CONST(Com_ConfigType, COM_CONST, AUTOMATIC) config
+);
 
-// Hàm gửi tín hiệu giao tiếp (mô phỏng)
-Std_ReturnType Com_SendSignal(Com_SignalType* signal);
+FUNC(Std_ReturnType, COM_CODE) Com_SendSignal(
+    P2VAR(Com_SignalType, COM_VAR, AUTOMATIC) signal
+);
 
-// Hàm nhận tín hiệu giao tiếp (mô phỏng)
-Std_ReturnType Com_ReceiveSignal(Com_SignalType* signal);
+FUNC(Std_ReturnType, COM_CODE) Com_ReceiveSignal(
+    P2VAR(Com_SignalType, COM_VAR, AUTOMATIC) signal
+);
 
-#endif // COM_H
+#endif /* COM_H */

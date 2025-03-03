@@ -1,15 +1,18 @@
 #include "Dcm.h"
+#include "Compiler.h"  // Thêm Compiler.h
 #include <stdio.h>
 #include <string.h>
 
-// Biến toàn cục mô phỏng trạng thái Dcm
-static uint8 is_initialized = 0;         // Trạng thái khởi tạo
-static uint8 current_session = 0;        // Phiên chẩn đoán hiện tại
+/* Biến toàn cục mô phỏng trạng thái */
+STATIC VAR(uint8, DCM_VAR) is_initialized = 0;
+STATIC VAR(uint8, DCM_VAR) current_session = 0;
 
-// Hàm khởi tạo module Dcm
-void Dcm_Init(const Dcm_ConfigType* config) {
+/* Hàm khởi tạo module Dcm */
+FUNC(void, DCM_CODE) Dcm_Init(
+    P2CONST(Dcm_ConfigType, DCM_CONST, AUTOMATIC) config
+) {
     if (config == NULL_PTR) {
-        Det_ReportError(4, 0, 0, DCM_E_PARAM_POINTER); // Báo lỗi AUTOSAR
+        Det_ReportError(4, 0, 0, DCM_E_PARAM_POINTER);
         return;
     }
 
@@ -24,8 +27,11 @@ void Dcm_Init(const Dcm_ConfigType* config) {
     }
 }
 
-// Hàm xử lý yêu cầu chẩn đoán (mô phỏng)
-Std_ReturnType Dcm_ProcessRequest(const Dcm_RequestType* request, Dcm_ResponseType* response) {
+/* Hàm xử lý yêu cầu chẩn đoán */
+FUNC(Std_ReturnType, DCM_CODE) Dcm_ProcessRequest(
+    P2CONST(Dcm_RequestType, DCM_CONST, AUTOMATIC) request,
+    P2VAR(Dcm_ResponseType, DCM_VAR, AUTOMATIC) response
+) {
     if (!is_initialized) {
         Det_ReportError(4, 0, 1, DCM_E_NOT_INITIALIZED);
         return DCM_NOT_OK;
@@ -36,29 +42,27 @@ Std_ReturnType Dcm_ProcessRequest(const Dcm_RequestType* request, Dcm_ResponseTy
         return DCM_NOT_OK;
     }
 
-    // Mô phỏng xử lý yêu cầu chẩn đoán
     printf("Dcm: Processing Request - ID = 0x%02X, Length = %d, Data = ",
            request->requestId, request->dataLength);
-    for (uint8 i = 0; i < request->dataLength; i++) {
+    for (VAR(uint8, AUTOMATIC) i = 0; i < request->dataLength; i++) {
         printf("0x%02X ", request->data[i]);
     }
     printf("\n");
 
-    // Mô phỏng phản hồi (giả định phản hồi đơn giản)
-    response->responseId = request->requestId + 0x40; // Ví dụ: 0x10 -> 0x50
+    response->responseId = request->requestId + 0x40;
     response->dataLength = 2;
-    response->data = (uint8*)malloc(response->dataLength * sizeof(uint8));
+    response->data = (P2VAR(uint8, DCM_VAR, AUTOMATIC))malloc(response->dataLength * sizeof(uint8));
     if (response->data == NULL_PTR) {
         Det_ReportError(4, 0, 1, DCM_E_MEMORY);
         return DCM_NOT_OK;
     }
 
-    response->data[0] = 0x01; // Dữ liệu phản hồi giả lập
+    response->data[0] = 0x01;
     response->data[1] = 0x00;
 
     printf("Dcm: Response - ID = 0x%02X, Length = %d, Data = ",
            response->responseId, response->dataLength);
-    for (uint8 i = 0; i < response->dataLength; i++) {
+    for (VAR(uint8, AUTOMATIC) i = 0; i < response->dataLength; i++) {
         printf("0x%02X ", response->data[i]);
     }
     printf("\n");
@@ -66,18 +70,17 @@ Std_ReturnType Dcm_ProcessRequest(const Dcm_RequestType* request, Dcm_ResponseTy
     return DCM_OK;
 }
 
-// Hàm main để kiểm tra (chỉ dùng khi compile riêng)
+/* Hàm main để kiểm tra */
 #ifdef TEST_DCM
-int main(void) {
-    Dcm_ConfigType config = {1, 1, 1}; // Session ID 1, Protocol 1, bật
-    Dcm_RequestType request;
-    Dcm_ResponseType response;
+FUNC(int, DCM_CODE) main(void) {
+    VAR(Dcm_ConfigType, AUTOMATIC) config = {1, 1, 1};
+    VAR(Dcm_RequestType, AUTOMATIC) request;
+    VAR(Dcm_ResponseType, AUTOMATIC) response;
 
-    // Khởi tạo dữ liệu yêu cầu
-    request.requestId = 0x10; // Diagnostic Session Control
+    request.requestId = 0x10;
     request.dataLength = 1;
-    request.data = (uint8*)malloc(request.dataLength * sizeof(uint8));
-    request.data[0] = 0x01; // Dữ liệu giả lập
+    request.data = (P2VAR(uint8, DCM_VAR, AUTOMATIC))malloc(request.dataLength * sizeof(uint8));
+    request.data[0] = 0x01;
 
     Dcm_Init(&config);
 
@@ -85,7 +88,6 @@ int main(void) {
         printf("DCM Request processed successfully\n");
     }
 
-    // Giải phóng bộ nhớ
     free(request.data);
     free(response.data);
 

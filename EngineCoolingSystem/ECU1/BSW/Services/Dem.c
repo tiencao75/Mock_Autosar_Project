@@ -1,23 +1,25 @@
 #include "Dem.h"
+#include "Compiler.h"  // Thêm Compiler.h
 #include <stdio.h>
 
-// Biến toàn cục mô phỏng danh sách sự kiện chẩn đoán
-static Dem_EventType events[10] = {0}; // Mảng mô phỏng tối đa 10 sự kiện, ban đầu tất cả là 0
-static uint8 is_initialized = 0;        // Trạng thái khởi tạo
+/* Biến toàn cục mô phỏng danh sách sự kiện */
+STATIC VAR(Dem_EventType, DEM_VAR) events[10] = {0};
+STATIC VAR(uint8, DEM_VAR) is_initialized = 0;
 
-// Hàm khởi tạo module Dem
-void Dem_Init(const Dem_ConfigType* config) {
+/* Hàm khởi tạo module Dem */
+FUNC(void, DEM_CODE) Dem_Init(
+    P2CONST(Dem_ConfigType, DEM_CONST, AUTOMATIC) config
+) {
     if (config == NULL_PTR) {
-        Det_ReportError(5, 0, 0, DEM_E_PARAM_POINTER); // Báo lỗi AUTOSAR
+        Det_ReportError(5, 0, 0, DEM_E_PARAM_POINTER);
         return;
     }
 
     if (config->isEnabled) {
         is_initialized = 1;
-        // Mô phỏng khởi tạo sự kiện với ID và mức độ nghiêm trọng
-        for (uint8 i = 0; i < 10; i++) {
+        for (VAR(uint8, AUTOMATIC) i = 0; i < 10; i++) {
             events[i].eventId = i;
-            events[i].status = 0; // Chưa xảy ra
+            events[i].status = 0;
             events[i].occurrence = 0;
         }
         printf("Dem Module Initialized (Event ID %d, Severity %d)\n",
@@ -28,21 +30,23 @@ void Dem_Init(const Dem_ConfigType* config) {
     }
 }
 
-// Hàm báo cáo sự kiện chẩn đoán (mô phỏng)
-Std_ReturnType Dem_ReportEvent(uint8 eventId, uint8 status) {
+/* Hàm báo cáo sự kiện chẩn đoán */
+FUNC(Std_ReturnType, DEM_CODE) Dem_ReportEvent(
+    VAR(uint8, DEM_VAR) eventId,
+    VAR(uint8, DEM_VAR) status
+) {
     if (!is_initialized) {
         Det_ReportError(5, 0, 1, DEM_E_NOT_INITIALIZED);
         return DEM_NOT_OK;
     }
 
-    if (eventId >= 10) { // Kiểm tra giới hạn mảng
+    if (eventId >= 10) {
         Det_ReportError(5, 0, 1, DEM_E_PARAM_EVENT_ID);
         return DEM_NOT_OK;
     }
 
-    // Cập nhật trạng thái và số lần xảy ra sự kiện
     events[eventId].status = status;
-    if (status == 1) { // Sự kiện đã xảy ra
+    if (status == 1) {
         events[eventId].occurrence++;
     }
     printf("Dem: Reported Event - ID = %d, Status = %d, Occurrences = %d\n",
@@ -50,8 +54,11 @@ Std_ReturnType Dem_ReportEvent(uint8 eventId, uint8 status) {
     return DEM_OK;
 }
 
-// Hàm đọc trạng thái sự kiện (mô phỏng)
-Std_ReturnType Dem_GetEventStatus(uint8 eventId, uint8* status) {
+/* Hàm đọc trạng thái sự kiện */
+FUNC(Std_ReturnType, DEM_CODE) Dem_GetEventStatus(
+    VAR(uint8, DEM_VAR) eventId,
+    P2VAR(uint8, DEM_VAR, AUTOMATIC) status
+) {
     if (!is_initialized) {
         Det_ReportError(5, 0, 2, DEM_E_NOT_INITIALIZED);
         return DEM_NOT_OK;
@@ -72,15 +79,15 @@ Std_ReturnType Dem_GetEventStatus(uint8 eventId, uint8* status) {
     return DEM_OK;
 }
 
-// Hàm main để kiểm tra (chỉ dùng khi compile riêng)
+/* Hàm main để kiểm tra */
 #ifdef TEST_DEM
-int main(void) {
-    Dem_ConfigType config = {0, 1, 1}; // Event ID 0, Severity 1, bật
-    uint8 status;
+FUNC(int, DEM_CODE) main(void) {
+    VAR(Dem_ConfigType, AUTOMATIC) config = {0, 1, 1};
+    VAR(uint8, AUTOMATIC) status;
 
     Dem_Init(&config);
 
-    if (Dem_ReportEvent(0, 1) == DEM_OK) { // Báo cáo sự kiện xảy ra
+    if (Dem_ReportEvent(0, 1) == DEM_OK) {
         printf("Event reported successfully\n");
     }
 
