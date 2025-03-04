@@ -5,6 +5,9 @@
 #include "Std_Types.h"   // Kiểu dữ liệu chuẩn AUTOSAR
 #include "Det.h"         // Báo lỗi phát triển
 
+/* Định nghĩa kiểu kênh ADC */
+typedef VAR(uint8, ADC_VAR) Adc_ChannelType;
+
 /* Cấu trúc cấu hình ADC */
 typedef struct {
     VAR(Adc_ChannelType, ADC_VAR) Adc_Channel;     // Kênh ADC
@@ -13,8 +16,6 @@ typedef struct {
     VAR(boolean, ADC_VAR) isEnabled;               // Trạng thái bật/tắt
 } Adc_ConfigType;
 
-/* Định nghĩa kiểu kênh ADC */
-typedef VAR(uint8, ADC_VAR) Adc_ChannelType;
 
 /* Trạng thái trả về của ADC */
 #define ADC_OK       E_OK

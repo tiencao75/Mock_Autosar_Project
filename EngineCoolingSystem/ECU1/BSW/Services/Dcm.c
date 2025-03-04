@@ -62,8 +62,8 @@ FUNC(Std_ReturnType, DCM_CODE) Dcm_ProcessRequest(
 
     printf("Dcm: Response - ID = 0x%02X, Length = %d, Data = ",
            response->responseId, response->dataLength);
-    for (VAR(uint8, AUTOMATIC) i = 0; i < response->dataLength; i++) {
-        printf("0x%02X ", response->data[i]);
+    for (VAR(uint8, AUTOMATIC) j = 0; j < response->dataLength; j++) {
+        printf("0x%02X ", response->data[j]);
     }
     printf("\n");
 

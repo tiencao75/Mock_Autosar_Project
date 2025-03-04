@@ -21,8 +21,8 @@ TASK(ReadSensor_Task) {
     printf("Executing ReadSensor_Task...\n");
 
     /* Gọi API RTE để đọc cảm biến */
-    Rte_Run_GetEngineTemperature();
-    Rte_Run_GetAirTemperature();
+    Rte_Call_PP_GetEngineTemperature();
+    Rte_Call_PP_GetAirTemperature();
 
     /* Kích hoạt event cho ProcessData_Task */
     SetEvent(TASK_ProcessData, BE_DataReady);
@@ -44,7 +44,7 @@ TASK(ProcessData_Task) {
     printf("Executing ProcessData_Task...\n");
 
     /* Gọi API RTE để xử lý dữ liệu */
-    Rte_Run_CalcCoolingSpeed();
+    Rte_Call_PP_CalcCoolingSpeed();
 
     /* Kích hoạt event cho SendData_Task */
     SetEvent(TASK_SendData, BE_DataSent);
@@ -66,7 +66,7 @@ TASK(SendData_Task) {
     printf("Executing SendData_Task...\n");
 
     /* Gọi API RTE để gửi tín hiệu điều khiển */
-    Rte_Run_SendControlSignal();
+    Rte_Call_PP_SendControlSignal();
 
     TerminateTask();
 }

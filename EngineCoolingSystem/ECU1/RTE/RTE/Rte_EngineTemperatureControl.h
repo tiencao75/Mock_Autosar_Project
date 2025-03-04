@@ -1,91 +1,51 @@
-/******************************************************************************/  
-/* Copyright   : SCSK Corporation                                             */  
-/* System Name : AUTOSAR BSW                                                  */  
-/* File Name   : Rte_EngineTemperatureControl.h                               */  
-/* Version     : v2.2.2                                                       */  
-/* Contents    : RTE Interface for Engine Temperature Control SWC              */  
-/* Author      : QINeS Ecuc Generator 2019.12 (Java)                          */  
-/* Note        : Interface for interaction between Application & BSW          */  
-/******************************************************************************/  
-
 #ifndef RTE_ENGINETEMPERATURECONTROL_H
 #define RTE_ENGINETEMPERATURECONTROL_H
 
-/*----------------------------------------------------------------------------*/  
-/* Include headers                                                            */  
-/*----------------------------------------------------------------------------*/  
-// #include "Rte_EngineTemperatureControl_Type.h"
-#include "Common/Std_Types.h"
-#include "Common/Compiler.h"
-#include "Common/Compiler_Cfg.h"
+#include "Std_Types.h"
+#include "Compiler.h"
+#include "Compiler_Cfg.h"
+#include "Rte_EngineTemperatureSensor.h"
 
+/*----------------------------------------------------------------------------*/
+/* API để Application gọi xuống BSW hoặc SWC khác                             */
+/*----------------------------------------------------------------------------*/
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+/* API để đọc nhiệt độ động cơ */
+FUNC(Std_ReturnType, RTE_CODE)
+Rte_Read_RP_EngineTemperatureControl_EngineTemperature(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) temperature);
 
-/*----------------------------------------------------------------------------*/  
-/* Định nghĩa hằng số nếu chưa có                                            */  
-/*----------------------------------------------------------------------------*/  
-#ifndef RTE_CONST
-#define RTE_CONST const
-#endif
+/* API để đọc nhiệt độ không khí */
+FUNC(Std_ReturnType, RTE_CODE)
+Rte_Read_RP_EngineTemperatureControl_AirTemperature(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) airTemperature);
 
-/*----------------------------------------------------------------------------*/  
-/* RTE Instance Structure                                                     */  
-/*----------------------------------------------------------------------------*/  
-struct Rte_CDS_EngineTemperatureControl {
-    VAR(uint8, AUTOMATIC) Rte_Dummy;
-};
+/* API để ghi tín hiệu điều khiển quạt làm mát */
+FUNC(Std_ReturnType, RTE_CODE)
+Rte_Write_PP_EngineTemperatureControl_FanSpeed(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) fanSpeed);
 
-extern RTE_CONST P2CONST(struct Rte_CDS_EngineTemperatureControl, RTE_CONST, RTE_CONST) Rte_Inst_EngineTemperatureControl;
+/* API để ghi tín hiệu điều khiển bơm nước */
+FUNC(Std_ReturnType, RTE_CODE)
+Rte_Write_PP_EngineTemperatureControl_PumpSpeed(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) pumpSpeed);
 
-/*----------------------------------------------------------------------------*/  
-/* API để Application gọi xuống BSW                                          */  
-/*----------------------------------------------------------------------------*/  
+/* API để ghi cảnh báo nhiệt độ */
+FUNC(Std_ReturnType, RTE_CODE)
+Rte_Write_PP_EngineTemperatureControl_WarningLight(P2VAR(uint8, AUTOMATIC, RTE_APPL_DATA) warningStatus);
 
-/* Đọc giá trị nhiệt độ động cơ từ cảm biến */
-extern FUNC(Std_ReturnType, RTE_CODE)  
-Rte_Read_EngineTemperatureControl_Temperature( P2VAR(float, AUTOMATIC, RTE_APPL_DATA) temperature );
+/* API ghi lỗi xuống RTE */
+FUNC(Std_ReturnType, RTE_CODE)
+Rte_Write_PP_NVBlock_StoreErrorToRTE(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) errorData);
 
-/* Ghi tốc độ quạt làm mát */
-extern FUNC(Std_ReturnType, RTE_CODE)  
-Rte_Write_EngineTemperatureControl_CoolingSpeed( VAR(uint8, AUTOMATIC) speed );
+/* API đọc tham số hiệu chỉnh từ RTE */
+FUNC(Std_ReturnType, RTE_CODE)
+Rte_Read_PP_NVBlock_GetCalibrationData(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) calibrationData);
 
-/* Đọc dữ liệu hiệu chỉnh */
-extern FUNC(Std_ReturnType, RTE_CODE)  
-Rte_Read_EngineTemperatureControl_CalibrationData( P2VAR(uint8, AUTOMATIC, RTE_APPL_DATA) calibrationData );
+/*----------------------------------------------------------------------------*/
+/* API để OS (BSW) gọi lên Application (Runnable)                             */
+/*----------------------------------------------------------------------------*/
 
-/* Báo lỗi DTC */
-extern FUNC(Std_ReturnType, RTE_CODE)  
-Rte_Call_EngineTemperatureControl_Dem_ReportErrorStatus( VAR(uint32, AUTOMATIC) DTC, VAR(uint8, AUTOMATIC) status );
+/* Runnable để tính toán tốc độ quạt làm mát */
+FUNC(void, RTE_CODE) Rte_Call_PP_CalcCoolingSpeed(void);
 
-/* Ghi log lỗi vào NvM */
-extern FUNC(Std_ReturnType, RTE_CODE)  
-Rte_Call_EngineTemperatureControl_NvM_WriteErrorLog( VAR(uint32, AUTOMATIC) errorCode );
-
-/* Đọc log lỗi từ NvM */
-extern FUNC(Std_ReturnType, RTE_CODE)  
-Rte_Call_EngineTemperatureControl_NvM_ReadErrorLog( P2VAR(uint32, AUTOMATIC, RTE_APPL_DATA) errorCode );
-
-/*----------------------------------------------------------------------------*/  
-/* API để OS (BSW) gọi lên Application (Runnable)                                 */  
-/*----------------------------------------------------------------------------*/  
-
-#define EngineTemperatureControl_START_SEC_CODE
-
-
-/* Runnable API được Application gọi */
-extern FUNC(void, EngineTemperatureControl_CODE) Rte_Run_CalcCoolingSpeed(void);
-extern FUNC(void, EngineTemperatureControl_CODE) Rte_Run_SendControlSignal(void);
-
-#define EngineTemperatureControl_STOP_SEC_CODE
-
-
-#ifdef __cplusplus
-} /* extern "C" */
-#endif /* __cplusplus */
+/* Runnable để gửi tín hiệu điều khiển */
+FUNC(void, RTE_CODE) Rte_Call_PP_SendControlSignal(void);
 
 #endif /* RTE_ENGINETEMPERATURECONTROL_H */
-
-/* End of Rte_EngineTemperatureControl.h */

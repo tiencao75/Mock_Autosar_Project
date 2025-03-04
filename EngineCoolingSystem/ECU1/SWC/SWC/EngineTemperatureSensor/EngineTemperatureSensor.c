@@ -16,13 +16,15 @@ FUNC(void, AUTOMATIC) EngineTemperatureSensor_Init(void) {
 /* Đọc giá trị nhiệt độ động cơ từ RTE và truyền xuống BSW                   */  
 /******************************************************************************/  
 FUNC(void, AUTOMATIC) GetEngineTemperature(void) {
-    float temperature = 0.0;
+    uint16 temperature = 0.0;
 
     /* Gọi API RTE để lấy dữ liệu từ BSW */
-    Std_ReturnType status = Rte_Read_EngineTemperatureSensor_EngineTemperature(&temperature);
+    Std_ReturnType status = Rte_Call_RP_EngineTemperatureSensor_EngineTemperature(&temperature);
+    /*Ghi du lieu xuong Rte*/
+    Rte_Write_PP_EngineTemperatureSensor_EngineTemperature(&temperature);
 
     if (status == E_OK) {
-        printf("GetEngineTemperature: Engine Temperature = %.2f°C\n", temperature);
+        printf("GetEngineTemperature: Engine Temperature = %d°C\n", temperature);
     } else {
         printf("GetEngineTemperature: Failed to read Engine Temperature.\n");
     }
@@ -33,13 +35,15 @@ FUNC(void, AUTOMATIC) GetEngineTemperature(void) {
 /* Đọc giá trị nhiệt độ không khí từ RTE và truyền xuống BSW                 */  
 /******************************************************************************/  
 FUNC(void, AUTOMATIC) GetAirTemperature(void) {
-    float airTemperature = 0.0;
+    uint16 airTemperature = 0.0;
 
     /* Gọi API RTE để lấy dữ liệu từ BSW */
-    Std_ReturnType status = Rte_Read_EngineTemperatureSensor_AirTemperature(&airTemperature);
+    Std_ReturnType status = Rte_Call_RP_EngineTemperatureSensor_AirTemperature(&airTemperature);
+    /*Ghi du lieu xuong Rte*/
+    Rte_Write_PP_EngineTemperatureSensor_AirTemperature(&airTemperature);
 
     if (status == E_OK) {
-        printf("GetAirTemperature: Air Temperature = %.2f°C\n", airTemperature);
+        printf("GetAirTemperature: Air Temperature = %d°C\n", airTemperature);
     } else {
         printf("GetAirTemperature: Failed to read Air Temperature.\n");
     }

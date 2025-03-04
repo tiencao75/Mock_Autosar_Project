@@ -17,21 +17,27 @@ CPU CORTEX-M4 {
     TASK ReadSensor_Task {
         PRIORITY = 40;
         SCHEDULE = FULL;
+	ACTIVATION = 1;
         AUTOSTART = TRUE;
+	STACKSIZE = 50;
         EVENT = BE_ReadSensor;
     };
 
     TASK ProcessData_Task {
         PRIORITY = 30;
         SCHEDULE = FULL;
+	ACTIVATION = 1;
         AUTOSTART = FALSE;
+	STACKSIZE = 50;
         EVENT = BE_DataReady;
     };
 
     TASK SendData_Task {
         PRIORITY = 20;
         SCHEDULE = FULL;
+	ACTIVATION = 1;
         AUTOSTART = FALSE;
+	STACKSIZE = 50;
         EVENT = BE_DataSent;
     };
 
