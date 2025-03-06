@@ -26,18 +26,18 @@ STATIC VAR(uint8, ADC_VAR) is_initialized = 0;          // Trạng thái khởi 
 FUNC(void, ADC_CODE) Adc_Init(
     P2CONST(Adc_ConfigType, ADC_CONST, AUTOMATIC) ConfigPtr
 ) {
-    if (ConfigPtr == NULL_PTR) {
-        printf("Error: Null configuration pointer\n");
-        return;
-    }
+    // if (ConfigPtr == NULL_PTR) {
+    //     printf("Error: Null configuration pointer\n");
+    //     return;
+    // }
 
     if (ConfigPtr->isEnabled) {
         is_initialized = 1;
-        printf("ADC Simulated: Initialized with Channel %d, Sampling Time %d\n",
-               ConfigPtr->Adc_Channel, ConfigPtr->Adc_SamplingTime);
+        // printf("ADC Simulated: Initialized with Channel %d, Sampling Time %d\n",
+        //        ConfigPtr->Adc_Channel, ConfigPtr->Adc_SamplingTime);
     } else {
         is_initialized = 0;
-        printf("ADC Simulated: Initialization disabled\n");
+        // printf("ADC Simulated: Initialization disabled\n");
     }
 }
 
@@ -60,10 +60,10 @@ FUNC(Std_ReturnType, ADC_CODE) Adc_ReadChannel(
         return E_NOT_OK;
     }
 
-    if (!is_initialized) {
-        printf("Error: ADC not initialized\n");
-        return E_NOT_OK;
-    }
+    // if (!is_initialized) {
+    //     printf("Error: ADC not initialized\n");
+    //     return E_NOT_OK;
+    // }
 
     if (Adc_Channel != 0) {
         printf("Error: Invalid channel %d (only channel 0 supported in simulation)\n", Adc_Channel);
@@ -71,7 +71,7 @@ FUNC(Std_ReturnType, ADC_CODE) Adc_ReadChannel(
     }
 
     *Adc_Value = simulated_engine_temp;
-    printf("ADC Simulated: Read Channel %d, Value = %d\n", Adc_Channel, *Adc_Value);
+    // printf("ADC Simulated: Read Channel %d, Value = %d\n", Adc_Channel, *Adc_Value);
     return E_OK;
 }
 

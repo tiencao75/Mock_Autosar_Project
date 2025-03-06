@@ -15,14 +15,15 @@
 #include "Rte_EngineTemperatureSensor.h"
 #include "Rte_NVBlock.h"
 #include <stdio.h>
+#include "Rte_Parameter.h"
 
 #define RTE_START_SEC_VAR
 /*----------------------------------------------------------------------------*/
 /* Biến toàn cục lưu trữ dữ liệu điều khiển nhiệt độ                          */
 /*----------------------------------------------------------------------------*/
-static uint16 FanSpeed = 0;           /* Tốc độ quạt làm mát */
-static uint16 PumpSpeed = 0;          /* Tốc độ bơm nước */
-static uint8 WarningLight = 0;        /* Cảnh báo nhiệt độ */
+uint16 FanSpeed = 0;           /* Tốc độ quạt làm mát */
+uint16 PumpSpeed = 0;          /* Tốc độ bơm nước */
+uint8 WarningLight = 0;        /* Cảnh báo nhiệt độ */
 #define RTE_STOP_SEC_VAR
 
 #define RTE_START_SEC_CODE
@@ -62,9 +63,7 @@ Rte_Write_PP_EngineTemperatureControl_FanSpeed(P2VAR(uint16, AUTOMATIC, RTE_APPL
     if (fanSpeed == NULL_PTR) {
         return E_NOT_OK;
     }
-
     FanSpeed = *fanSpeed;
-    printf("RTE: Updated Fan Speed to %d RPM\n", FanSpeed);
 
     return E_OK;
 }
@@ -80,8 +79,6 @@ Rte_Write_PP_EngineTemperatureControl_PumpSpeed(P2VAR(uint16, AUTOMATIC, RTE_APP
     }
 
     PumpSpeed = *pumpSpeed;
-    printf("RTE: Updated Pump Speed to %d RPM\n", PumpSpeed);
-
     return E_OK;
 }
 
@@ -96,8 +93,6 @@ Rte_Write_PP_EngineTemperatureControl_WarningLight(P2VAR(uint8, AUTOMATIC, RTE_A
     }
 
     WarningLight = *warningStatus;
-    printf("RTE: Updated Warning Light Status to %d\n", WarningLight);
-
     return E_OK;
 }
 
@@ -112,7 +107,6 @@ Rte_Write_PP_NVBlock_StoreErrorToRTE(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) err
     }
 
     StoredErrorCode = *errorData;
-    printf("RTE: Error Code %d stored in RTE\n", StoredErrorCode);
     return E_OK;
 }
 
@@ -121,22 +115,33 @@ Rte_Write_PP_NVBlock_StoreErrorToRTE(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) err
 /* Đọc tham số hiệu chỉnh từ RTE                                              */  
 /******************************************************************************/  
 FUNC(Std_ReturnType, RTE_CODE)  
-Rte_Read_PP_NVBlock_GetCalibrationData(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) calibrationData) {
-    if (calibrationData == NULL_PTR) {
-        return E_NOT_OK;
+Rte_Read_RP_Parameter_GetCalibrationData(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) calibrationDataEngine, 
+                                         P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) calibrationDataAir) {
+    if (calibrationDataEngine == NULL_PTR || calibrationDataAir == NULL_PTR) {
+        return E_NOT_OK;  // Kiểm tra con trỏ NULL
     }
 
-    *calibrationData = CalibrationData;
-    printf("RTE: Provided Calibration Data = %d\n", CalibrationData);
+    // Trả về dữ liệu hiệu chỉnh cho nhiệt độ động cơ
+    *calibrationDataEngine = CalibrationDataEngine;
+   
+
+    // Trả về dữ liệu hiệu chỉnh cho nhiệt độ không khí
+    *calibrationDataAir = CalibrationDataAir;
+   
     return E_OK;
 }
 
+FUNC(Std_ReturnType, RTE_CODE)
+Rte_Call_EngineTemperatureControl_ReportToDem(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) EventId,
+                                         P2VAR(uint8, AUTOMATIC, RTE_APPL_DATA) EventStatus){
+                                            
+}
 /*----------------------------------------------------------------------------*/  
 /* Runnable API Implementations (Được Application gọi)                        */  
 /*----------------------------------------------------------------------------*/  
 
-FUNC(void, RTE_CODE) Rte_Call_PP_CalcCoolingSpeed(void) {
-    CalcCoolingSpeed();
+FUNC(void, RTE_CODE) Rte_Call_PP_CalcCoolingSpeed(CoolingData* data) {
+		CalcCoolingSpeed(data);
 }
 
 FUNC(void, RTE_CODE) Rte_Call_PP_SendControlSignal(void) {

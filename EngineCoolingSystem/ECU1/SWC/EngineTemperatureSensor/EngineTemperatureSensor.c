@@ -23,11 +23,11 @@ FUNC(void, AUTOMATIC) GetEngineTemperature(void) {
     /*Ghi du lieu xuong Rte*/
     Rte_Write_PP_EngineTemperatureSensor_EngineTemperature(&temperature);
 
-    if (status == E_OK) {
-        printf("GetEngineTemperature: Engine Temperature = %d°C\n", temperature);
-    } else {
-        printf("GetEngineTemperature: Failed to read Engine Temperature.\n");
-    }
+    // if (status == E_OK) {
+    //     printf("GetEngineTemperature: Engine Temperature = %d°C\n", temperature);
+    // } else {
+    //     printf("GetEngineTemperature: Failed to read Engine Temperature.\n");
+    // }
 }
 
 /******************************************************************************/  
@@ -42,9 +42,9 @@ FUNC(void, AUTOMATIC) GetAirTemperature(void) {
     /*Ghi du lieu xuong Rte*/
     Rte_Write_PP_EngineTemperatureSensor_AirTemperature(&airTemperature);
 
-    if (status == E_OK) {
-        printf("GetAirTemperature: Air Temperature = %d°C\n", airTemperature);
-    } else {
-        printf("GetAirTemperature: Failed to read Air Temperature.\n");
-    }
+    // if (status == E_OK) {
+    //     printf("GetAirTemperature: Air Temperature = %d°C\n", airTemperature);
+    // } else {
+    //     printf("GetAirTemperature: Failed to read Air Temperature.\n");
+    // }
 }

@@ -1,57 +1,44 @@
 CPU CORTEX-M4 {
     OS S_OSEK {
         STATUS = EXTENDED;
-        STARTUPHOOK = TRUE;
-        ERRORHOOK = TRUE;
-        STACKOVERFLOWHOOK = TRUE;
-        SHUTDOWNHOOK = TRUE;
+        STARTUPHOOK = FALSE;
+        ERRORHOOK = FALSE;
+        STACKOVERFLOWHOOK = FALSE;
+        SHUTDOWNHOOK = FALSE;
         PRETASKHOOK = FALSE;
         POSTTASKHOOK = FALSE;
         USEGETSERVICEID = FALSE;
         USEPARAMETERACCESS = FALSE;
         USERESSCHEDULER = FALSE;
-        SYSTEMTICKMS = 1;
+        SYSTEMTICKMS = 10;
     };
 
     /* Task Definitions */
     TASK ReadSensor_Task {
         PRIORITY = 40;
         SCHEDULE = FULL;
-	ACTIVATION = 1;
+	    ACTIVATION = 1;
         AUTOSTART = TRUE;
-	STACKSIZE = 50;
+	    STACKSIZE = 50;
         EVENT = BE_ReadSensor;
     };
 
     TASK ProcessData_Task {
         PRIORITY = 30;
         SCHEDULE = FULL;
-	ACTIVATION = 1;
+	    ACTIVATION = 1;
         AUTOSTART = FALSE;
-	STACKSIZE = 50;
+	    STACKSIZE = 50;
         EVENT = BE_DataReady;
     };
 
     TASK SendData_Task {
         PRIORITY = 20;
         SCHEDULE = FULL;
-	ACTIVATION = 1;
+	    ACTIVATION = 1;
         AUTOSTART = FALSE;
-	STACKSIZE = 50;
+	    STACKSIZE = 50;
         EVENT = BE_DataSent;
-    };
-
-    /* Event Definitions */
-    EVENT BE_ReadSensor {
-        TASK = ReadSensor_Task;
-    };
-
-    EVENT BE_DataReady {
-        TASK = ProcessData_Task;
-    };
-
-    EVENT BE_DataSent {
-        TASK = SendData_Task;
     };
 
     /* Alarm Definitions */
@@ -80,5 +67,18 @@ CPU CORTEX-M4 {
         MINCYCLE = 1;
         MAXALLOWEDVALUE = 0xFFFFFFFF;
         TICKSPERBASE = 1;
+    };
+
+        /* Event Definitions */
+    EVENT BE_ReadSensor {
+        MASK = AUTO ;
+    };
+
+    EVENT BE_DataReady {
+        MASK = AUTO ; 
+    };
+
+    EVENT BE_DataSent {
+        MASK = AUTO ; 
     };
 };

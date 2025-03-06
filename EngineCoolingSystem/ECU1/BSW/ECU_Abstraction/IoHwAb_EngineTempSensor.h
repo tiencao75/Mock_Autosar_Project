@@ -5,6 +5,8 @@
 #include "Std_Types.h"   // Kiểu dữ liệu chuẩn AUTOSAR
 #include "Det.h"         // Báo lỗi phát triển
 
+#define MIN_TEMP 30   // Điều chỉnh MIN_TEMP thành 100
+#define MAX_TEMP 150   // Điều chỉnh MAX_TEMP thành 300
 /* Trạng thái trả về cho IoHwAb */
 #define IOHWAB_OK       E_OK
 #define IOHWAB_NOT_OK   E_NOT_OK
@@ -30,5 +32,7 @@ FUNC(void, IOHWAB_CODE) IoHwAb_EngineTempSensor_Init(
 FUNC(Std_ReturnType, IOHWAB_CODE) IoHwAb_EngineTempSensor_Read(
     P2VAR(uint16, IOHWAB_VAR, AUTOMATIC) engineTempValue
 );
+
+FUNC(uint16, IOHWAB_CODE) IoHwAb_EngineTempSensor_SimulateNewTemperature(void);
 
 #endif /* IOHWAB_ENGINETEMPSENSOR_H */

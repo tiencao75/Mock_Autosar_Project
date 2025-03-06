@@ -10,6 +10,7 @@
 /*----------------------------------------------------------------------------*/
 
 /* API cung cấp dữ liệu hiệu chỉnh */
-FUNC(void, RTE_CODE) ProvideCalibrationData(void);
+
+FUNC(void, AUTOMATIC) ProvideCalibrationData(void);
 
 #endif /* PARAMETER_H */

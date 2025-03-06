@@ -34,10 +34,10 @@ FUNC(void, IOHWAB_CODE) IoHwAb_AirTempSensor_Init(
 FUNC(Std_ReturnType, IOHWAB_CODE) IoHwAb_AirTempSensor_Read(
     P2VAR(uint16, IOHWAB_VAR, AUTOMATIC) airTempValue
 ) {
-    if (!is_initialized) {
-        Det_ReportError(1, 0, 1, IOHWAB_E_NOT_INITIALIZED);
-        return IOHWAB_NOT_OK;
-    }
+    // if (!is_initialized) {
+    //     Det_ReportError(1, 0, 1, IOHWAB_E_NOT_INITIALIZED);
+    //     return IOHWAB_NOT_OK;
+    // }
 
     if (airTempValue == NULL_PTR) {
         Det_ReportError(1, 0, 1, IOHWAB_E_PARAM_POINTER);
@@ -47,7 +47,7 @@ FUNC(Std_ReturnType, IOHWAB_CODE) IoHwAb_AirTempSensor_Read(
     VAR(uint16, AUTOMATIC) adc_value;
     if (Adc_ReadChannel(0, &adc_value) == E_OK) {
         *airTempValue = simulated_air_temp;
-        printf("IoHwAb: Air Temperature Read = %d°C\n", *airTempValue);
+        //printf("IoHwAb: Air Temperature Read = %d°C\n", *airTempValue);
         return IOHWAB_OK;
     } else {
         Det_ReportError(1, 0, 1, IOHWAB_E_READ_FAILED);

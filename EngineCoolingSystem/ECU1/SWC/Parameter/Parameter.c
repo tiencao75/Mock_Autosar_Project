@@ -6,9 +6,14 @@
 /* Cung cấp dữ liệu hiệu chỉnh từ RTE                                         */  
 /******************************************************************************/  
 FUNC(void, AUTOMATIC) ProvideCalibrationData(void) {
-    uint16 calibrationData;
+    uint16 calibrationDataEngine =90 ;  // Giá trị hiệu chỉnh cho nhiệt độ động cơ
+    uint16 calibrationDataAir = 40;     // Giá trị hiệu chỉnh cho nhiệt độ không khí
 
-    if (Rte_Write_PP_Parameter_ProvideCalibrationData(&calibrationData) == E_OK) {
-        printf("Parameter: Provided Calibration Data = %d\n", calibrationData);
+    // Ghi dữ liệu hiệu chỉnh cho nhiệt độ động cơ và nhiệt độ không khí xuống RTE
+    if (Rte_Write_PP_Parameter_ProvideCalibrationData(&calibrationDataEngine, &calibrationDataAir) == E_OK) {
+        //printf("Parameter: Provided Calibration Data for Engine Temperature = %d\n", calibrationDataEngine);
+        //printf("Parameter: Provided Calibration Data for Air Temperature = %d\n", calibrationDataAir);
+    } else {
+        //printf("Failed to write calibration data to RTE.\n");
     }
 }

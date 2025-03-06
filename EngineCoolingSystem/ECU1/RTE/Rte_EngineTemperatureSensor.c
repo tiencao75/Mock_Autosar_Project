@@ -73,7 +73,6 @@ Rte_Write_PP_EngineTemperatureSensor_EngineTemperature(P2VAR(uint16, AUTOMATIC, 
 
     /* Cập nhật giá trị nhiệt độ động cơ toàn cục */
     EngineTemperature = *temperature;
-    printf("RTE: Updated Engine Temperature to %d°C\n", EngineTemperature);
 
     return E_OK;
 }
@@ -90,7 +89,6 @@ Rte_Write_PP_EngineTemperatureSensor_AirTemperature(P2VAR(uint16, AUTOMATIC, RTE
 
     /* Cập nhật giá trị nhiệt độ không khí toàn cục */
     AirTemperature = *airTemperature;
-    printf("RTE: Updated Air Temperature to %d°C\n", AirTemperature);
 
     return E_OK;
 }
