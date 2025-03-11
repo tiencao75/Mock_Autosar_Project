@@ -60,11 +60,6 @@ FUNC(Std_ReturnType, ADC_CODE) Adc_ReadChannel(
         return E_NOT_OK;
     }
 
-    // if (!is_initialized) {
-    //     printf("Error: ADC not initialized\n");
-    //     return E_NOT_OK;
-    // }
-
     if (Adc_Channel != 0) {
         printf("Error: Invalid channel %d (only channel 0 supported in simulation)\n", Adc_Channel);
         return E_NOT_OK;
@@ -87,28 +82,3 @@ FUNC(void, ADC_CODE) Adc_SimulateNewTemperature(
     simulated_engine_temp = new_temp;
     printf("ADC Simulated: Temperature updated to %d°C\n", simulated_engine_temp);
 }
-
-/* Hàm main để kiểm tra */
-#ifdef TEST_ADC
-FUNC(int, ADC_CODE) main(void) {
-    VAR(Adc_ConfigType, AUTOMATIC) config = {0, 10, 1}; // Kênh 0, 10-bit, bật
-    VAR(uint16, AUTOMATIC) temp;
-
-    Adc_Init(&config);
-
-    if (Adc_ReadChannel(0, &temp) == E_OK) {
-        printf("Temperature read successfully: %d°C\n", temp);
-    }
-
-    Adc_SimulateNewTemperature(85);
-    if (Adc_ReadChannel(0, &temp) == E_OK) {
-        printf("Updated Temperature: %d°C\n", temp);
-    }
-
-    if (Adc_ReadChannel(0, NULL_PTR) == E_NOT_OK) {
-        printf("Error handling worked for NULL pointer\n");
-    }
-
-    return 0;
-}
-#endif

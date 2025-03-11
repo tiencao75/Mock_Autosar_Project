@@ -5,6 +5,7 @@
 #include "Compiler.h"
 #include "Compiler_Cfg.h"
 #include "Com.h"
+#include "Dem.h"
 #include "Rte_Parameter.h"
 #include "Rte_EngineTemperatureSensor.h"
 
@@ -34,7 +35,7 @@ Rte_Write_PP_EngineTemperatureControl_WarningLight(P2VAR(uint8, AUTOMATIC, RTE_A
 
 /* API ghi lỗi xuống RTE */
 FUNC(Std_ReturnType, RTE_CODE)
-Rte_Write_PP_NVBlock_StoreErrorToRTE(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) errorData);
+Rte_Write_PP_NVBlock_StoreErrorToRTE(VAR(uint16, AUTOMATIC) errorData);
 
 /* API đọc tham số hiệu chỉnh từ RTE */
 FUNC(Std_ReturnType, RTE_CODE)
@@ -42,9 +43,19 @@ Rte_Read_RP_Parameter_GetCalibrationData(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA)
                                          P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) calibrationDataAir);
 
 FUNC(Std_ReturnType, RTE_CODE)
-Rte_Call_EngineTemperatureControl_ReportToDem(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) EventId,
-                                         P2VAR(uint8, AUTOMATIC, RTE_APPL_DATA) EventStatus);
-                                         
+Rte_Call_EngineTemperatureControl_ReportToDem(VAR(uint16, AUTOMATIC) EventId,
+                                         VAR(uint8, AUTOMATIC) EventStatus);
+
+FUNC(Std_ReturnType, RTE_CODE)
+Rte_Read_PP_EngineTemperatureControl_FanSpeed(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) fanSpeed);
+
+FUNC(Std_ReturnType, RTE_CODE)
+Rte_Read_RP_EngineTemperatureControl_PumSpeed(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) pumSpeed);
+
+FUNC(Std_ReturnType, RTE_CODE)
+Rte_Read_RP_EngineTemperatureControl_WarningLight(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) warningStatus);
+
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_PP_SignalSpeed(void);
 
 /*----------------------------------------------------------------------------*/
 /* API để OS (BSW) gọi lên Application (Runnable)                             */

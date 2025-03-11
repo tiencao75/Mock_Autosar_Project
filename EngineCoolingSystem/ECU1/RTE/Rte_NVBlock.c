@@ -15,9 +15,7 @@ Rte_Read_PP_NVBlock_GetErrorData(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) errorDa
     if (errorData == NULL_PTR) {
         return E_NOT_OK;
     }
-
     *errorData = StoredErrorCode;
-    printf("RTE: Retrieved Error Code = %d from RTE\n", StoredErrorCode);
     return E_OK;
 }
 
@@ -26,15 +24,17 @@ Rte_Read_PP_NVBlock_GetErrorData(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) errorDa
 /* Gọi xuống NVM Manager để lưu lỗi                                           */  
 /******************************************************************************/  
 FUNC(Std_ReturnType, RTE_CODE)  
-Rte_Write_PP_NVManager_StoreError(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) errorData) {
+Rte_Call_NVManager_StoreError(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) errorData) {
     if (errorData == NULL_PTR) {
         return E_NOT_OK;
     }
 
-    StoredErrorCode = *errorData;  // Lưu lỗi vào bộ nhớ nội bộ
-
     // Gọi xuống NVM Manager để ghi vào bộ nhớ vĩnh viễn
-    printf("RTE: Storing Error Code = %d in NVM Manager\n", StoredErrorCode);
+    NvM_WriteBlock(NVM_E_PARAM_BLOCK_ID, errorData);
     
     return E_OK;
+}
+
+FUNC(void, RTE_CODE) Rte_Call_PP_HandleErrorToNVM(void){
+    HandleErrorToNVM();
 }

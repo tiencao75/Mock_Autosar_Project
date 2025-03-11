@@ -101,12 +101,8 @@ Rte_Write_PP_EngineTemperatureControl_WarningLight(P2VAR(uint8, AUTOMATIC, RTE_A
 /* Ghi lỗi xuống RTE                                                          */  
 /******************************************************************************/  
 FUNC(Std_ReturnType, RTE_CODE)  
-Rte_Write_PP_NVBlock_StoreErrorToRTE(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) errorData) {
-    if (errorData == NULL_PTR) {
-        return E_NOT_OK;
-    }
-
-    StoredErrorCode = *errorData;
+Rte_Write_PP_NVBlock_StoreErrorToRTE(VAR(uint16, AUTOMATIC) errorData) {
+    StoredErrorCode = errorData;
     return E_OK;
 }
 
@@ -132,16 +128,103 @@ Rte_Read_RP_Parameter_GetCalibrationData(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA)
 }
 
 FUNC(Std_ReturnType, RTE_CODE)
-Rte_Call_EngineTemperatureControl_ReportToDem(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) EventId,
-                                         P2VAR(uint8, AUTOMATIC, RTE_APPL_DATA) EventStatus){
-                                            
+Rte_Call_EngineTemperatureControl_ReportToDem(VAR(uint16, AUTOMATIC) EventId,
+                                         VAR(uint8, AUTOMATIC) EventStatus){
+    Dem_SetEventStatus(EventId, EventStatus);
+	return E_OK;																					 
+}
+
+/******************************************************************************/
+/* API: Rte_Read_PP_EngineTemperatureControl_FanSpeed                         */
+/* Đọc tốc độ quạt làm mát từ SWC Actuator                                     */
+/******************************************************************************/
+FUNC(Std_ReturnType, RTE_CODE)
+Rte_Read_PP_EngineTemperatureControl_FanSpeed(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) fanSpeed) {
+    /* Kiểm tra con trỏ đầu vào */
+    if (fanSpeed == NULL_PTR) {
+        return E_NOT_OK;
+    }
+
+    /* Gán giá trị của FanSpeed vào tham số đầu ra */
+    //*fanSpeed = FanSpeed;
+    *fanSpeed = FanSpeed; 
+
+    return E_OK;
+}
+
+/******************************************************************************/
+/* API: Rte_Read_PP_EngineTemperatureControl_PumSpeed                         */
+/* Đọc tốc độ quạt làm mát từ SWC Actuator                                     */
+/******************************************************************************/
+FUNC(Std_ReturnType, RTE_CODE)
+Rte_Read_RP_EngineTemperatureControl_PumSpeed(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) pumSpeed) {
+    /* Kiểm tra con trỏ đầu vào */
+    if (pumSpeed == NULL_PTR) {
+        return E_NOT_OK;
+    }
+
+    /* Gán giá trị của FanSpeed vào tham số đầu ra */
+    *pumSpeed = PumpSpeed;
+
+    return E_OK;
+}
+
+
+
+/******************************************************************************/
+/* API: Rte_Read_PP_EngineTemperatureControl_PumSpeed                         */
+/* Đọc tốc độ quạt làm mát từ SWC Actuator                                     */
+/******************************************************************************/
+FUNC(Std_ReturnType, RTE_CODE)
+Rte_Read_RP_EngineTemperatureControl_WarningLight(P2VAR(uint16, AUTOMATIC, RTE_APPL_DATA) warningStatus) {
+    /* Kiểm tra con trỏ đầu vào */
+    if (warningStatus == NULL_PTR) {
+        return E_NOT_OK;
+    }
+
+    /* Gán giá trị của FanSpeed vào tham số đầu ra */
+    *warningStatus = WarningLight;
+
+    return E_OK;
+}
+
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_PP_SignalSpeed(void) {
+    CombinedSignalDataType combinedData;
+    Com_SignalIdType signalId = 1;
+    Std_ReturnType status;
+
+    // Đọc giá trị từ RTE
+    status = Rte_Read_PP_EngineTemperatureControl_FanSpeed(&combinedData.FanSpeed);
+    if (status != E_OK) {
+        return E_NOT_OK;
+    }
+
+    status = Rte_Read_RP_EngineTemperatureControl_PumSpeed(&combinedData.PumpSpeed);
+    if (status != E_OK) {
+        return E_NOT_OK;
+    }
+
+    status = Rte_Read_RP_EngineTemperatureControl_WarningLight(&combinedData.warningStatus);
+    if (status != E_OK) {
+        return E_NOT_OK;
+    }
+
+    // Gọi Com_SendSignal để gửi dữ liệu
+    if (Com_SendSignal(signalId, (const void*)&combinedData) == COM_OK) {
+        // printf("Rte_Call_PP_SignalSpeed: Sent Combined Signal - FanSpeed = %d, PumpSpeed = %d, WarningStatus = %d\n", 
+        //        combinedData.FanSpeed, combinedData.PumpSpeed, combinedData.warningStatus);
+        return E_OK;
+    } else {
+        // printf("Rte_Call_PP_SignalSpeed: Failed to send Combined Signal.\n");
+        return E_NOT_OK;
+    }
 }
 /*----------------------------------------------------------------------------*/  
 /* Runnable API Implementations (Được Application gọi)                        */  
 /*----------------------------------------------------------------------------*/  
 
 FUNC(void, RTE_CODE) Rte_Call_PP_CalcCoolingSpeed(CoolingData* data) {
-		CalcCoolingSpeed(data);
+	CalcCoolingSpeed(data);
 }
 
 FUNC(void, RTE_CODE) Rte_Call_PP_SendControlSignal(void) {

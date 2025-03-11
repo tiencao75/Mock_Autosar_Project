@@ -9,6 +9,8 @@
 #define IOHWAB_OK       E_OK
 #define IOHWAB_NOT_OK   E_NOT_OK
 
+#define MIN_AIR_TEMP 0
+#define MAX_AIR_TEMP 55
 /* Định nghĩa các mã lỗi */
 #define IOHWAB_E_PARAM_POINTER    0x01U  // Lỗi con trỏ NULL
 #define IOHWAB_E_PARAM_CONFIG     0x02U  // Lỗi cấu hình
@@ -30,5 +32,7 @@ FUNC(void, IOHWAB_CODE) IoHwAb_AirTempSensor_Init(
 FUNC(Std_ReturnType, IOHWAB_CODE) IoHwAb_AirTempSensor_Read(
     P2VAR(uint16, IOHWAB_VAR, AUTOMATIC) airTempValue
 );
+
+FUNC(uint16, IOHWAB_CODE) IoHwAb_AirTempSensor_SimulateNewTemperature(void);
 
 #endif /* IOHWAB_AIRTEMPSENSOR_H */

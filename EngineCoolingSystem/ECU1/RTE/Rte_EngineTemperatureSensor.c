@@ -53,10 +53,10 @@ Rte_Call_RP_EngineTemperatureSensor_AirTemperature(P2VAR(uint16, AUTOMATIC, RTE_
     }
 
     /* Gọi API từ IoHwAb để lấy nhiệt độ không khí */
-    Std_ReturnType status = IoHwAb_AirTempSensor_Read(&AirTemperature);
+    Std_ReturnType status = IoHwAb_AirTempSensor_Read(airTemperature);
     
     /* Trả kết quả về biến được truyền vào */
-    *airTemperature = AirTemperature;
+    //*airTemperature = AirTemperature;
 
     return status;
 }

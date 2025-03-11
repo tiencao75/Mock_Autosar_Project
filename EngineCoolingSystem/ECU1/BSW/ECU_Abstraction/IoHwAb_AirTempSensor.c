@@ -2,6 +2,8 @@
 #include "Compiler.h"  // Thêm Compiler.h
 #include "Adc.h"       // Gọi MCAL để đọc giá trị ADC
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 /* Biến toàn cục mô phỏng */
 STATIC VAR(uint16, IOHWAB_VAR) simulated_air_temp = 25; // Nhiệt độ ban đầu
@@ -34,11 +36,6 @@ FUNC(void, IOHWAB_CODE) IoHwAb_AirTempSensor_Init(
 FUNC(Std_ReturnType, IOHWAB_CODE) IoHwAb_AirTempSensor_Read(
     P2VAR(uint16, IOHWAB_VAR, AUTOMATIC) airTempValue
 ) {
-    // if (!is_initialized) {
-    //     Det_ReportError(1, 0, 1, IOHWAB_E_NOT_INITIALIZED);
-    //     return IOHWAB_NOT_OK;
-    // }
-
     if (airTempValue == NULL_PTR) {
         Det_ReportError(1, 0, 1, IOHWAB_E_PARAM_POINTER);
         return IOHWAB_NOT_OK;
@@ -46,7 +43,7 @@ FUNC(Std_ReturnType, IOHWAB_CODE) IoHwAb_AirTempSensor_Read(
 
     VAR(uint16, AUTOMATIC) adc_value;
     if (Adc_ReadChannel(0, &adc_value) == E_OK) {
-        *airTempValue = simulated_air_temp;
+        *airTempValue = IoHwAb_AirTempSensor_SimulateNewTemperature();
         //printf("IoHwAb: Air Temperature Read = %d°C\n", *airTempValue);
         return IOHWAB_OK;
     } else {
@@ -55,10 +52,8 @@ FUNC(Std_ReturnType, IOHWAB_CODE) IoHwAb_AirTempSensor_Read(
     }
 }
 
-/* Hàm mô phỏng thay đổi giá trị nhiệt độ không khí */
-FUNC(void, IOHWAB_CODE) IoHwAb_AirTempSensor_SimulateNewTemperature(
-    VAR(uint16, IOHWAB_VAR) new_temp
-) {
-    simulated_air_temp = new_temp;
-    printf("IoHwAb: Air Temperature Simulated to %d°C\n", simulated_air_temp);
+/* Hàm mô phỏng thay đổi giá trị nhiệt độ động cơ */
+FUNC(uint16, IOHWAB_CODE) IoHwAb_AirTempSensor_SimulateNewTemperature(void) {
+    return simulated_air_temp = MIN_AIR_TEMP + (rand() % (MAX_AIR_TEMP - MIN_AIR_TEMP + 1));;
+    
 }

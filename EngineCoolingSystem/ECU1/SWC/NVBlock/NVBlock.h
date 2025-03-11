@@ -10,9 +10,7 @@
 /*----------------------------------------------------------------------------*/
 
 /* API ghi lỗi vào NVM */
-FUNC(void, RTE_CODE) WriteErrorToNVM(void);
+FUNC(void, RTE_CODE) HandleErrorToNVM(void);
 
-/* API đọc lỗi từ NVM */
-FUNC(void, RTE_CODE) ReadErrorToNVM(void);
 
 #endif /* NVBLOCK_H */

@@ -1,9 +1,9 @@
 #include "IoHwAb_EngineTempSensor.h"
-#include "Compiler.h"  // Thêm Compiler.h
-#include "Adc.h"       // Gọi MCAL để đọc giá trị ADC
+#include "Compiler.h"
+#include "Adc.h"
 #include <stdio.h>
-#include <stdlib.h>  // Để sử dụng rand() và srand()
-#include <time.h>    // Để sử dụng time() cho việc khởi tạo seed
+#include <stdlib.h>
+#include <time.h>
 
 
 /* Biến toàn cục mô phỏng */
@@ -38,11 +38,6 @@ FUNC(void, IOHWAB_CODE) IoHwAb_EngineTempSensor_Init(
 FUNC(Std_ReturnType, IOHWAB_CODE) IoHwAb_EngineTempSensor_Read(
     P2VAR(uint16, IOHWAB_VAR, AUTOMATIC) engineTempValue
 ) {
-    // if (!is_initialized) {
-    //     Det_ReportError(2, 0, 1, IOHWAB_E_NOT_INITIALIZED);
-    //     return IOHWAB_NOT_OK;
-    // }
-
     if (engineTempValue == NULL_PTR) {
         Det_ReportError(2, 0, 1, IOHWAB_E_PARAM_POINTER);
         return IOHWAB_NOT_OK;

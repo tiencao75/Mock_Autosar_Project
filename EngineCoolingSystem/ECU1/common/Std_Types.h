@@ -38,6 +38,13 @@ typedef struct {
     uint8 warningStatus;   // Tín hi?u tr?ng thái dèn c?nh báo
 } MessageType;
 
+// Ð?nh nghia c?u trúc d? g?p d? li?u FanSpeed, PumpSpeed và warningStatus
+typedef struct {
+    uint16 FanSpeed;      // Gi? s? FanSpeed là uint16, di?u ch?nh n?u c?n
+    uint16 PumpSpeed;     // Gi? s? PumpSpeed là uint16, di?u ch?nh n?u c?n
+    uint8 warningStatus;  // Gi? s? warningStatus là uint8 (ví d?: 0 = OK, 1 = Warning), di?u ch?nh n?u c?n
+} CombinedSignalDataType;
+
 
 /* AUTOSAR Defines */
 #define TRUE      			1U
