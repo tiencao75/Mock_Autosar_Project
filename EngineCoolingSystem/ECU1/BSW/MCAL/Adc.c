@@ -13,33 +13,9 @@
 #include <stdio.h>
 
 /* Biến toàn cục mô phỏng */
-STATIC VAR(uint16, ADC_VAR) simulated_engine_temp = 75; // Giá trị nhiệt độ ban đầu
-STATIC VAR(uint8, ADC_VAR) is_initialized = 0;          // Trạng thái khởi tạo
+STATIC VAR(uint16, ADC_VAR) simulated_engine_temp = 0; // Giá trị nhiệt độ ban đầu
+STATIC VAR(uint16, ADC_VAR) simulated_air_temp = 0;          // Trạng thái khởi tạo
 
-/**************************************************************************
- * @brief   Hàm khởi tạo 1 kênh trong bộ ADC (mô phỏng).
- * @details Hàm này mô phỏng khởi tạo 1 kênh trong bộ ADC sử dụng các cài đặt từ
- *          con trỏ được truyền vào hàm.
- * @param   ConfigPtr Con trỏ chứa các cài đặt cấu hình ADC.
- * @return  void
- **************************************************************************/
-FUNC(void, ADC_CODE) Adc_Init(
-    P2CONST(Adc_ConfigType, ADC_CONST, AUTOMATIC) ConfigPtr
-) {
-    // if (ConfigPtr == NULL_PTR) {
-    //     printf("Error: Null configuration pointer\n");
-    //     return;
-    // }
-
-    if (ConfigPtr->isEnabled) {
-        is_initialized = 1;
-        // printf("ADC Simulated: Initialized with Channel %d, Sampling Time %d\n",
-        //        ConfigPtr->Adc_Channel, ConfigPtr->Adc_SamplingTime);
-    } else {
-        is_initialized = 0;
-        // printf("ADC Simulated: Initialization disabled\n");
-    }
-}
 
 /**************************************************************************
  * @brief   Hàm đọc giá trị sau chuyển đổi ở 1 kênh trong bộ ADC (mô phỏng).
@@ -59,14 +35,16 @@ FUNC(Std_ReturnType, ADC_CODE) Adc_ReadChannel(
         printf("Error: Null pointer for Adc_Value\n");
         return E_NOT_OK;
     }
-
-    if (Adc_Channel != 0) {
-        printf("Error: Invalid channel %d (only channel 0 supported in simulation)\n", Adc_Channel);
-        return E_NOT_OK;
+    
+    if (Adc_Channel == 0)
+    {
+        *Adc_Value = Adc_SimulateAirTemperature();
     }
-
-    *Adc_Value = simulated_engine_temp;
-    // printf("ADC Simulated: Read Channel %d, Value = %d\n", Adc_Channel, *Adc_Value);
+    else if (Adc_Channel == 1)
+    {
+        *Adc_Value = Adc_SimulateEngineTemperature();
+    }
+    
     return E_OK;
 }
 
@@ -76,9 +54,10 @@ FUNC(Std_ReturnType, ADC_CODE) Adc_ReadChannel(
  * @param   new_temp Giá trị nhiệt độ mới.
  * @return  void
  **************************************************************************/
-FUNC(void, ADC_CODE) Adc_SimulateNewTemperature(
-    VAR(uint16, ADC_VAR) new_temp
-) {
-    simulated_engine_temp = new_temp;
-    printf("ADC Simulated: Temperature updated to %d°C\n", simulated_engine_temp);
+FUNC(Std_ReturnType, ADC_CODE) Adc_SimulateEngineTemperature() {
+    return simulated_engine_temp = MIN_ENGINE_TEMP + (rand() % (MAX_ENGINE_TEMP - MIN_ENGINE_TEMP + 1));
+}
+
+FUNC(Std_ReturnType, ADC_CODE) Adc_SimulateAirTemperature() {
+    return simulated_air_temp = MIN_AIR_TEMP + (rand() % (MAX_AIR_TEMP - MIN_AIR_TEMP + 1));
 }

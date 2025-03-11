@@ -10,75 +10,63 @@ CPU CORTEX-M4 {
         USEGETSERVICEID = FALSE;
         USEPARAMETERACCESS = FALSE;
         USERESSCHEDULER = FALSE;
-        SYSTEMTICKMS = 10;
+        SYSTEMTICKMS = 1;
     };
 
-    /* Task Definitions */
     TASK ReadSensor_Task {
         PRIORITY = 40;
         SCHEDULE = FULL;
-	    ACTIVATION = 1;
+	ACTIVATION = 1;
         AUTOSTART = TRUE;
-	    STACKSIZE = 50;
-        EVENT = BE_ReadSensor;
+	STACKSIZE = 50;
+	EVENT = BE_Sensor;
     };
 
     TASK ProcessData_Task {
         PRIORITY = 30;
         SCHEDULE = FULL;
-	    ACTIVATION = 1;
-        AUTOSTART = FALSE;
-	    STACKSIZE = 50;
-        EVENT = BE_DataReady;
+	ACTIVATION = 1;
+        AUTOSTART = TRUE;
+	STACKSIZE = 50;
+        EVENT = BE_ReadSensor;
     };
 
     TASK SendData_Task {
         PRIORITY = 20;
         SCHEDULE = FULL;
-	    ACTIVATION = 1;
-        AUTOSTART = FALSE;
-	    STACKSIZE = 50;
-        EVENT = BE_DataSent;
+	ACTIVATION = 1;
+        AUTOSTART = TRUE;
+	STACKSIZE = 50;
+        EVENT =  BE_DataReady;
     };
 
-    /* Alarm Definitions */
     ALARM Rte_ReadSensor_100ms {
         COUNTER = MainCounter;
-        ACTION = ACTIVATETASK {
+        ACTION = SETEVENT {
             TASK = ReadSensor_Task;
+	    EVENT = BE_Sensor;
         };
         AUTOSTART = TRUE {
-            ALARMTIME = 1;
+            ALARMTIME = 200;
             CYCLETIME = 100;
         };
     };
 
-    /* Alarm to trigger ProcessData_Task after ReadSensor_Task finishes */
-    ALARM Alrm_ProcessData {
-        COUNTER = MainCounter;
-        ACTION = ACTIVATETASK {
-            TASK = ProcessData_Task;
-        };
-        AUTOSTART = FALSE;
-    };
-
-    /* Counter Definitions */
     COUNTER MainCounter {
         MINCYCLE = 1;
         MAXALLOWEDVALUE = 0xFFFFFFFF;
         TICKSPERBASE = 1;
     };
 
-        /* Event Definitions */
+    EVENT BE_Sensor;{
+         MASK = AUTO ;
+    };
+
     EVENT BE_ReadSensor {
-        MASK = AUTO ;
+         MASK = AUTO ;
     };
 
     EVENT BE_DataReady {
-        MASK = AUTO ; 
-    };
-
-    EVENT BE_DataSent {
-        MASK = AUTO ; 
+         MASK = AUTO ;
     };
 };
