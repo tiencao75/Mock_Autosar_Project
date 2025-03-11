@@ -15,8 +15,14 @@
 /* Định nghĩa Event ID */
 #define BE_ReadSensor         (1 << 0)
 #define BE_DataReady          (1 << 1)
-#define BE_DataSent           (1 << 2)
+#define BE_Sensor             (1 << 2)
 
+enum OsCfg_TaskIDs
+{
+	ReadSensor_Task,
+	ProcessData_Task,
+	SendData_Task
+};
 /* Define EventMaskType if not already defined */
 typedef uint32 EventMaskType; 
 

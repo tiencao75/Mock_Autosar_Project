@@ -22,11 +22,6 @@ typedef struct {
     VAR(boolean, IOHWAB_VAR) isEnabled;     // Trạng thái bật/tắt
 } IoHwAb_EngineTempConfigType;
 
-/* Khai báo hàm */
-FUNC(void, IOHWAB_CODE) IoHwAb_EngineTempSensor_Init(
-    P2CONST(IoHwAb_EngineTempConfigType, IOHWAB_CONST, AUTOMATIC) config
-);
-
 FUNC(Std_ReturnType, IOHWAB_CODE) IoHwAb_EngineTempSensor_Read(
     P2VAR(uint16, IOHWAB_VAR, AUTOMATIC) engineTempValue
 );

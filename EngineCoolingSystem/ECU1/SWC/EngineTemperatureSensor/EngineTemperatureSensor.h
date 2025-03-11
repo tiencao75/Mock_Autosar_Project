@@ -1,9 +1,9 @@
 #ifndef ENGINE_TEMPERATURE_SENSOR_H
 #define ENGINE_TEMPERATURE_SENSOR_H
 
-#include "Common/Std_Types.h"
-#include "Common/Compiler.h"
-#include "Common/Compiler_Cfg.h"
+#include "Std_Types.h"
+#include "Compiler.h"
+#include "Compiler_Cfg.h"
 
 /*----------------------------------------------------------------------------*/
 /* API Declarations (Hàm được gọi từ Scheduler hoặc SWC khác)                 */

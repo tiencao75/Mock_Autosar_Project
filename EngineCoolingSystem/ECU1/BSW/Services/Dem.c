@@ -1,100 +1,27 @@
 #include "Dem.h"
-#include "Compiler.h"  // Thêm Compiler.h
-#include <stdio.h>
 
-/* Biến toàn cục mô phỏng danh sách sự kiện */
-STATIC VAR(Dem_EventType, DEM_VAR) events[10] = {0};
-STATIC VAR(uint8, DEM_VAR) is_initialized = 0;
+/* Khởi tạo mảng chứa các lỗi với trạng thái mặc định PASSED */
+Dem_ErrorEventType eventArray[] = {
+    {EVENT_01, DEM_EVENT_STATUS_PASSED},
+    {EVENT_02, DEM_EVENT_STATUS_PASSED},
+    {EVENT_03, DEM_EVENT_STATUS_PASSED},
+    {EVENT_04, DEM_EVENT_STATUS_PASSED},
+    {EVENT_05, DEM_EVENT_STATUS_PASSED},
+    {EVENT_06, DEM_EVENT_STATUS_PASSED},
+    {EVENT_07, DEM_EVENT_STATUS_PASSED}
+};
 
-/* Hàm khởi tạo module Dem */
-FUNC(void, DEM_CODE) Dem_Init(
-    P2CONST(Dem_ConfigType, DEM_CONST, AUTOMATIC) config
+/* Cập nhật trạng thái sự kiện trong hệ thống DEM */
+FUNC(Std_ReturnType, DEM_CODE) Dem_SetEventStatus(
+    Dem_EventIdType EventId,
+    Dem_EventStatusType EventStatus
 ) {
-    if (config == NULL_PTR) {
-        Det_ReportError(5, 0, 0, DEM_E_PARAM_POINTER);
-        return;
-    }
-
-    if (config->isEnabled) {
-        is_initialized = 1;
-        for (VAR(uint8, AUTOMATIC) i = 0; i < 10; i++) {
-            events[i].eventId = i;
-            events[i].status = 0;
-            events[i].occurrence = 0;
+		uint8 i;
+    for (i = 0; i < MAX_EVENTS; i++) {
+        if (eventArray[i].EventId == EventId) {
+            eventArray[i].EventStatus = EventStatus;
+            return E_OK;
         }
-        printf("Dem Module Initialized (Event ID %d, Severity %d)\n",
-               config->eventId, config->severity);
-    } else {
-        is_initialized = 0;
-        Det_ReportError(5, 0, 0, DEM_E_PARAM_CONFIG);
     }
+    return E_NOT_OK;
 }
-
-/* Hàm báo cáo sự kiện chẩn đoán */
-FUNC(Std_ReturnType, DEM_CODE) Dem_ReportEvent(
-    VAR(uint8, DEM_VAR) eventId,
-    VAR(uint8, DEM_VAR) status
-) {
-    if (!is_initialized) {
-        Det_ReportError(5, 0, 1, DEM_E_NOT_INITIALIZED);
-        return DEM_NOT_OK;
-    }
-
-    if (eventId >= 10) {
-        Det_ReportError(5, 0, 1, DEM_E_PARAM_EVENT_ID);
-        return DEM_NOT_OK;
-    }
-
-    events[eventId].status = status;
-    if (status == 1) {
-        events[eventId].occurrence++;
-    }
-    printf("Dem: Reported Event - ID = %d, Status = %d, Occurrences = %d\n",
-           eventId, status, events[eventId].occurrence);
-    return DEM_OK;
-}
-
-/* Hàm đọc trạng thái sự kiện */
-FUNC(Std_ReturnType, DEM_CODE) Dem_GetEventStatus(
-    VAR(uint8, DEM_VAR) eventId,
-    P2VAR(uint8, DEM_VAR, AUTOMATIC) status
-) {
-    if (!is_initialized) {
-        Det_ReportError(5, 0, 2, DEM_E_NOT_INITIALIZED);
-        return DEM_NOT_OK;
-    }
-
-    if (eventId >= 10) {
-        Det_ReportError(5, 0, 2, DEM_E_PARAM_EVENT_ID);
-        return DEM_NOT_OK;
-    }
-
-    if (status == NULL_PTR) {
-        Det_ReportError(5, 0, 2, DEM_E_PARAM_POINTER);
-        return DEM_NOT_OK;
-    }
-
-    *status = events[eventId].status;
-    printf("Dem: Get Event Status - ID = %d, Status = %d\n", eventId, *status);
-    return DEM_OK;
-}
-
-/* Hàm main để kiểm tra */
-#ifdef TEST_DEM
-FUNC(int, DEM_CODE) main(void) {
-    VAR(Dem_ConfigType, AUTOMATIC) config = {0, 1, 1};
-    VAR(uint8, AUTOMATIC) status;
-
-    Dem_Init(&config);
-
-    if (Dem_ReportEvent(0, 1) == DEM_OK) {
-        printf("Event reported successfully\n");
-    }
-
-    if (Dem_GetEventStatus(0, &status) == DEM_OK) {
-        printf("Event Status = %d\n", status);
-    }
-
-    return 0;
-}
-#endif

@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "compiler.h": "c",
-        "compiler_cfg.h": "c"
+        "compiler_cfg.h": "c",
+        "wdgif.h": "c",
+        "rte_wdg.h": "c",
+        "rte_enginetemperaturecontrol.h": "c",
+        "stdio.h": "c"
     }
 }

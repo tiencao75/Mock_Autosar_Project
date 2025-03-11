@@ -1,74 +1,86 @@
-#include "Os.h"
+#include "os.h"
 #include "Rte_EngineTemperatureControl.h"
+#include "Rte_EngineTemperatureSensor.h"
 #include <stdio.h>
 
-/* Function Definitions */
-void SystemInit(void) {
-    /* Khởi tạo hệ thống nếu cần thiết */
-}
+int  ReadSensor_Task_Toggle = 0 ; 
+int  ProcessData_Task_Toggle = 0 ; 
+int  SendData_Task_Toggle = 0;
+CoolingData data = {0, 0, 0, 0, 0};
+volatile uint8_t Simulate_Error = 0;
 
-/* Main function to start the OS */
-int main(void) {
-    StartOS();
-    while (1) {
-        /* OS chạy liên tục */
-    }
-    return 0;
+
+
+DeclareTask(ReadSensor_Task);
+DeclareTask(ProcessData_Task);
+DeclareTask(SendData_Task);
+
+void SystemInit(void)
+{
+}
+int main(void)
+{
+  StartOS();
+  while(1); /* Should not be executed */
+  return 0;
 }
 
 /* Read Sensor Task */
 TASK(ReadSensor_Task) {
-    printf("Executing ReadSensor_Task...\n");
+	
+		while(true){
+		WaitEvent(BE_Sensor);
+		ReadSensor_Task_Toggle = 1;			
+		Rte_Call_PP_GetEngineTemperature();
+    Rte_Call_PP_GetAirTemperature();
 
-    /* Gọi API RTE để đọc cảm biến */
-    Rte_Run_GetEngineTemperature();
-    Rte_Run_GetAirTemperature();
+    SetEvent(ProcessData_Task, BE_ReadSensor); 
+		/*Gia lap loi*/
+		if (OsCnt_GetSystemCounter() == 2000)
+		{
+			Simulate_Error = 1;
+		}
+		if (Simulate_Error == 1)
+		{
+			// printf("Sensor Task Failed! System will reset...\n");
+			while (1);
+		}
 
-    /* Kích hoạt event cho ProcessData_Task */
-    SetEvent(TASK_ProcessData, BE_DataReady);
-
-    TerminateTask();
+		ReadSensor_Task_Toggle = 0;
+		ClearEvent(BE_Sensor);
+		}
 }
 
 /* Process Data Task */
 TASK(ProcessData_Task) {
-    EventMaskType eventMask;
+    //EventMaskType eventMask;
 
-    /* Chờ event */
-    WaitEvent(BE_DataReady);
-    GetEvent(TASK_ProcessData, &eventMask);
+		while(true){
+		WaitEvent(BE_ReadSensor);
+		ProcessData_Task_Toggle = 1;
+   
+    Rte_Call_PP_Calibration_CalibrationData();
+		Rte_Call_PP_CalcCoolingSpeed(&data);
+		Rte_Call_PP_HandleErrorToNVM();
 
-    /* Xóa event trước khi xử lý để tránh kích hoạt lại Task không cần thiết */
-    ClearEvent(BE_DataReady);
-
-    printf("Executing ProcessData_Task...\n");
-
-    /* Gọi API RTE để xử lý dữ liệu */
-    Rte_Run_CalcCoolingSpeed();
-
-    /* Kích hoạt event cho SendData_Task */
-    SetEvent(TASK_SendData, BE_DataSent);
-
-    TerminateTask();
+    SetEvent(SendData_Task, BE_DataReady); 
+		ProcessData_Task_Toggle = 0;
+		ClearEvent(BE_ReadSensor); 
+		}
 }
 
 /* Send Data Task */
 TASK(SendData_Task) {
-    EventMaskType eventMask;
-
-    /* Chờ event */
-    WaitEvent(BE_DataSent);
-    GetEvent(TASK_SendData, &eventMask);
-
-    /* Xóa event trước khi xử lý để đảm bảo Task không bị kích hoạt lại vô nghĩa */
-    ClearEvent(BE_DataSent);
-
-    printf("Executing SendData_Task...\n");
-
-    /* Gọi API RTE để gửi tín hiệu điều khiển */
-    Rte_Run_SendControlSignal();
-
-    TerminateTask();
+    //EventMaskType eventMask;
+		
+		while (true){
+		WaitEvent(BE_DataReady);
+		SendData_Task_Toggle = 1;
+			
+    Rte_Call_PP_SendControlSignal();	
+		
+		SendData_Task_Toggle = 0;
+		ClearEvent(BE_DataReady);
+		//SendData_Task_Toggle ^= 0x1U;
+		}
 }
-
-
