@@ -1,0 +1,71 @@
+/*
+ * OIL File for ECU2 - EngineTemperatureActuator
+ * Generated for OSEK/VDX OS
+ * Date: [Current Date, e.g., 2025-03-02]
+ */
+
+CPU ECU2 {
+    OS OS_ECU2 {
+        STATUS = EXTENDED;          // Sử dụng scheduling EXTENDED
+        STARTUPHOOK = FALSE;        // Không cần hook khởi động
+        SHUTDOWNHOOK = FALSE;       // Không cần hook tắt
+        ERRORHOOK = TRUE;           // Bật hook lỗi để báo cáo qua Det (nếu cần)
+        PRETASKHOOK = FALSE;        // Không cần hook trước task
+        POSTTASKHOOK = FALSE;       // Không cần hook sau task
+
+        TASK Actuator_Task {
+            PRIORITY = 40;          // Ưu tiên 40
+            SCHEDULE = FULL;        // Hỗ trợ scheduling EXTENDED và Preemptive
+            ACTIVATION = 1;         // Tối đa 1 lần kích hoạt đồng thời
+            AUTOSTART = FALSE;      // Không tự động khởi động (Autosar Activation = FALSE)
+            EVENT BE_TEMPERATURE_UPDATE;    // Sử dụng event để kích hoạt
+            EVENT BE_PUMP_SPEED_CHANGED;    // Event cho ChangeSpeedEnginePump
+            EVENT BE_FAN_SPEED_CHANGED;     // Event cho ChangeSpeedEngineFan
+            EVENT BE_WARNING_LIGHT_CHANGED; // Event cho ChangeEngineTemperatureWarningLight
+        }
+
+        TASK ReadControlSignal_Task {
+            PRIORITY = 50;          // Ưu tiên 50 (cao hơn Actuator_Task)
+            SCHEDULE = FULL;        // Hỗ trợ scheduling EXTENDED và Preemptive
+            ACTIVATION = 1;         // Tối đa 1 lần kích hoạt đồng thời
+            AUTOSTART = FALSE;      // Không tự động khởi động (Autosar Activation = FALSE)
+            EVENT BE_CONTROL_SIGNAL_READ;   // Sử dụng event để kích hoạt
+        }
+
+        EVENT BE_CONTROL_SIGNAL_READ {
+            MASK = 0x00000001;      // Bit mask cho ReadControlSignal
+        }
+
+        EVENT BE_TEMPERATURE_UPDATE {
+            MASK = 0x00000002;      // Bit mask cho cập nhật nhiệt độ
+        }
+
+        EVENT BE_PUMP_SPEED_CHANGED {
+            MASK = 0x00000004;      // Bit mask cho ChangeSpeedEnginePump
+        }
+
+        EVENT BE_FAN_SPEED_CHANGED {
+            MASK = 0x00000008;      // Bit mask cho ChangeSpeedEngineFan
+        }
+
+        EVENT BE_WARNING_LIGHT_CHANGED {
+            MASK = 0x00000010;      // Bit mask cho ChangeEngineTemperatureWarningLight
+        }
+
+        /* Có thể thêm ALARM nếu cần định kỳ kích hoạt task (tùy chọn) */
+        /*
+        ALARM Alarm_Actuator {
+            COUNTER = SystemCounter;    // Giả định có counter hệ thống
+            ACTION = ACTIVATE TASK Actuator_Task;
+            AUTOSTART = FALSE;          // Không tự động khởi động
+            CYCLETIME = 100;            // Chu kỳ 100ms (tùy chọn)
+        }
+        */
+
+        COUNTER SystemCounter {
+            MINCYCLE = 1;           // Chu kỳ tối thiểu 1 tick
+            MAXALLOWEDVALUE = 65535; // Giá trị tối đa của counter
+            TICKSPERBASE = 1;       // 1 tick = 1ms (giả định)
+        }
+    }
+};

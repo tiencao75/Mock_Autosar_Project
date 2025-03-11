@@ -4,11 +4,10 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "E:/Fresher_FSoft/AUTOSAR/Mock_Autosar_Project/EngineCoolingSystem/ECU1/RTE",
-                "E:/Fresher_FSoft/AUTOSAR/Mock_Autosar_Project/EngineCoolingSystem/ECU2/BSW/ECU_Abstraction",
+                "E:/Fresher_FSoft/AUTOSAR/Mock_Autosar_Project/EngineCoolingSystem/ECU2/SWC",
+                "E:/Fresher_FSoft/AUTOSAR/Mock_Autosar_Project/EngineCoolingSystem/ECU2/RTE",
                 "E:/Fresher_FSoft/AUTOSAR/Mock_Autosar_Project/EngineCoolingSystem/ECU2/common",
-                "E:/Fresher_FSoft/AUTOSAR/Mock_Autosar_Project/EngineCoolingSystem/ECU2/BSW/Services",
-                "E:/Fresher_FSoft/AUTOSAR/Mock_Autosar_Project/EngineCoolingSystem/ECU2/BSW/MCAL"
+                "E:/Fresher_FSoft/AUTOSAR/Mock_Autosar_Project/EngineCoolingSystem/ECU2/BSW/Services"
             ],
             "defines": [
                 "_DEBUG",
