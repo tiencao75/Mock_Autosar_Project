@@ -1,0 +1,85 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: µVision V5.41.0.0
+Copyright (C) 2024 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Truong Huy Hoa, FPT Software, LIC=----
+ 
+Tool Versions:
+Toolchain:       MDK-Lite  Version: 5.41.0.0
+Toolchain Path:  C:\Users\Windows\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin
+C Compiler:      ArmClang.exe V6.22
+Assembler:       Armasm.exe V6.22
+Linker/Locator:  ArmLink.exe V6.22
+Library Manager: ArmAr.exe V6.22
+Hex Converter:   FromElf.exe V6.22
+CPU DLL:         SARMCM3.DLL V5.41.0.0
+Dialog DLL:      DCM.DLL V1.17.5.0
+Target DLL:      UL2CM3.DLL V1.164.14.0
+Dialog DLL:      TCM.DLL V1.56.4.0
+ 
+<h2>Project:</h2>
+E:\Fresher_FSoft\AUTOSAR\Udemy_Courses\OSEK RTOS II_Udemy\OSEK-OS-Course-II-Repo\KeilUvision\OsekIntroII_Example5\OsekIntroII_Example5.uvprojx
+Project File Date:  03/11/2025
+
+<h2>Output:</h2>
+*** Using Compiler 'V6.22', folder: 'C:\Users\Windows\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
+Rebuild target 'Target 1'
+compiling Dio.c...
+compiling OsekIntroII_Example5.c...
+assembling keilUvisoin_startup.s...
+compiling counter.c...
+compiling OsCfg.c...
+compiling CanDriver.c...
+compiling CanIf.c...
+compiling Pwm.c...
+compiling hook.c...
+compiling IoHwAb_EngineTempActuator.c...
+compiling Com.c...
+compiling PDU_R.c...
+../../../../../Mock_Autosar_Project/EngineCoolingSystem/ECU1/BSW/Services/Dem.c(20): warning: GCC does not allow variable declarations in for loop initializers before C99 [-Wgcc-compat]
+   20 |         for (VAR(uint8, AUTOMATIC) i = 0; i < 10; i++) {
+      |                  ^
+1 warning generated.
+compiling Dem.c...
+compiling Det.c...
+../../../../../Mock_Autosar_Project/EngineCoolingSystem/ECU2/RTE/Rte_EngineTemperatureActuator.c(17): warning: incompatible pointer types passing 'const Rte_EngineTempActuatorConfigType *' to parameter of type 'const IoHwAb_EngineTempActuatorConfigType *' [-Wincompatible-pointer-types]
+   17 |     IoHwAb_InitEngineTempActuator(config);
+      |                                   ^~~~~~
+../../../../../Mock_Autosar_Project/EngineCoolingSystem/ECU2/BSW/ECU_Abstraction\IoHwAb_EngineTempActuator.h(30): note: passing argument to parameter 'config' here
+   30 |     P2CONST(IoHwAb_EngineTempActuatorConfigType, IOHWAB_CONST, AUTOMATIC) config
+      |                                                                           ^
+1 warning generated.
+compiling Rte_EngineTemperatureActuator.c...
+compiling EngineTemperatureActuator.c...
+linking...
+Program Size: Code=8786 RO-data=682 RW-data=152 ZI-data=1096  
+".\build_files\OsekIntro_Example5.axf" - 0 Error(s), 2 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                https://www.keil.com/pack/ARM.CMSIS.6.1.0.pack
+                ARM::CMSIS@6.1.0
+                CMSIS (Common Microcontroller Software Interface Standard)
+   * Component: CORE Version: 6.1.0
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.TM4C_DFP.1.1.0.pack
+                Keil::TM4C_DFP@1.1.0
+                Texas Instruments Tiva C Series Device Support and Examples
+
+<h2>Collection of Component include folders:</h2>
+  ./RTE/_Target_1
+  C:/Users/Windows/AppData/Local/Arm/Packs/ARM/CMSIS/6.1.0/CMSIS/Core/Include
+  C:/Users/Windows/AppData/Local/Arm/Packs/Keil/TM4C_DFP/1.1.0/Device/Include/TM4C123
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE@6.1.0
+Build Time Elapsed:  00:00:01
+</pre>
+</body>
+</html>

@@ -1,0 +1,59 @@
+CPU CORTEX-M4 {
+    OS S_OSEK {
+        STATUS = EXTENDED;
+        STARTUPHOOK = FALSE;
+        ERRORHOOK = FALSE;
+        STACKOVERFLOWHOOK = FALSE;
+        SHUTDOWNHOOK = FALSE;
+        PRETASKHOOK = FALSE;
+        POSTTASKHOOK = FALSE;
+        USEGETSERVICEID = FALSE;
+        USEPARAMETERACCESS = FALSE;
+        USERESSCHEDULER = FALSE;
+        SYSTEMTICKMS = 1;
+    };
+
+    TASK ReadControlSignal_Task {
+        PRIORITY = 40;  // Higher priority to read signals first
+        SCHEDULE = FULL;
+        ACTIVATION = 1;
+        AUTOSTART = TRUE;
+        STACKSIZE = 50;
+        EVENT = BE_CONTROL_SIGNAL_READ;
+    };
+
+    TASK Actuator_Task {
+        PRIORITY = 30;  // Lower priority than ReadControlSignal_Task
+        SCHEDULE = FULL;
+        ACTIVATION = 1;
+        AUTOSTART = TRUE;
+        STACKSIZE = 50;
+        EVENT = BE_TEMPERATURE_UPDATE;
+    };
+
+    ALARM Rte_ControlSignal_100ms {
+        COUNTER = MainCounter;
+        ACTION = SETEVENT {
+            TASK = ReadControlSignal_Task;
+            EVENT = BE_CONTROL_SIGNAL_READ;
+        };
+        AUTOSTART = TRUE {
+            ALARMTIME = 2000;  // Initial delay of 2000ms
+            CYCLETIME = 100;   // Trigger every 100ms
+        };
+    };
+
+    COUNTER MainCounter {
+        MINCYCLE = 1;
+        MAXALLOWEDVALUE = 0xFFFFFFFF;
+        TICKSPERBASE = 1;
+    };
+
+    EVENT BE_CONTROL_SIGNAL_READ {
+        MASK = AUTO;
+    };
+
+    EVENT BE_TEMPERATURE_UPDATE {
+        MASK = AUTO;
+    };
+};

@@ -1,0 +1,7 @@
+./build_files/dcm.o: \
+  ..\..\..\..\..\Mock_Autosar_Project\EngineCoolingSystem\ECU1\BSW\Services\Dcm.c \
+  ..\..\..\..\..\Mock_Autosar_Project\EngineCoolingSystem\ECU1\BSW\Services\Dcm.h \
+  ..\..\..\..\..\Mock_Autosar_Project\EngineCoolingSystem\ECU2\common\Compiler.h \
+  ..\..\..\..\..\Mock_Autosar_Project\EngineCoolingSystem\ECU2\common\Compiler_Cfg.h \
+  ..\..\..\..\..\Mock_Autosar_Project\EngineCoolingSystem\ECU2\common\Std_Types.h \
+  ..\..\..\..\..\Mock_Autosar_Project\EngineCoolingSystem\ECU1\BSW\MCAL\Det.h
