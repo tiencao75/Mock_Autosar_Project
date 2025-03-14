@@ -1,0 +1,72 @@
+CPU CORTEX-M4 {
+    OS S_OSEK {
+        STATUS = EXTENDED;
+        STARTUPHOOK = FALSE;
+        ERRORHOOK = FALSE;
+        STACKOVERFLOWHOOK = FALSE;
+        SHUTDOWNHOOK = FALSE;
+        PRETASKHOOK = FALSE;
+        POSTTASKHOOK = FALSE;
+        USEGETSERVICEID = FALSE;
+        USEPARAMETERACCESS = FALSE;
+        USERESSCHEDULER = FALSE;
+        SYSTEMTICKMS = 1;
+    };
+
+    TASK ReadSensor_Task {
+        PRIORITY = 40;
+        SCHEDULE = FULL;
+	ACTIVATION = 1;
+        AUTOSTART = TRUE;
+	STACKSIZE = 50;
+	EVENT = BE_Sensor;
+    };
+
+    TASK ProcessData_Task {
+        PRIORITY = 30;
+        SCHEDULE = FULL;
+	ACTIVATION = 1;
+        AUTOSTART = TRUE;
+	STACKSIZE = 50;
+        EVENT = BE_ReadSensor;
+    };
+
+    TASK SendData_Task {
+        PRIORITY = 20;
+        SCHEDULE = FULL;
+	ACTIVATION = 1;
+        AUTOSTART = TRUE;
+	STACKSIZE = 50;
+        EVENT =  BE_DataReady;
+    };
+
+    ALARM Rte_ReadSensor_100ms {
+        COUNTER = MainCounter;
+        ACTION = SETEVENT {
+            TASK = ReadSensor_Task;
+	    EVENT = BE_Sensor;
+        };
+        AUTOSTART = TRUE {
+            ALARMTIME = 200;
+            CYCLETIME = 100;
+        };
+    };
+
+    COUNTER MainCounter {
+        MINCYCLE = 1;
+        MAXALLOWEDVALUE = 0xFFFFFFFF;
+        TICKSPERBASE = 1;
+    };
+
+    EVENT BE_Sensor;{
+         MASK = AUTO ;
+    };
+
+    EVENT BE_ReadSensor {
+         MASK = AUTO ;
+    };
+
+    EVENT BE_DataReady {
+         MASK = AUTO ;
+    };
+};
