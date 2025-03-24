@@ -3,10 +3,15 @@
 ## Overview
 The Engine Cooling System is designed to monitor and manage engine temperature effectively. This system utilizes ultrasonic sensors and actuators to regulate the cooling process, ensuring optimal engine performance and safety. Key functions include continuous temperature monitoring, activation of cooling fans, water pump control, overheat protection, and diagnostic error logging.
 
-![Engine Cooling System Diagram](https://github.com/tiencao75/Mock_Autosar_Project/blob/main/z6413832225423_1319b9df19a9162e51ab2a3acafe38e4.jpg?raw=true)
+<p align="center">
+  <img src="./img/EngineCoolingSystemDiagram.jpg" alt="Engine Cooling System Diagram" width="800">
+</p>
 
 ## Features
-![Features Overview](https://github.com/tiencao75/Mock_Autosar_Project/blob/main/z6413832689867_af4647b1c5a4e8741c1e06836e3b9a04.jpg?raw=true)
+
+<p align="center">
+  <img src="./img/FeaturesOverview.jpg" alt="Features Overview" width="800">
+</p>
 
 - **Temperature Monitoring**: Continuously reads engine and ambient air temperature from sensors.
 - **Cooling Fan Activation**: Sends signals to activate the cooling fan when necessary.
@@ -23,7 +28,10 @@ The Engine Cooling System is designed to monitor and manage engine temperature e
 - **Parameter**: Provides calibration data for temperature control and system configuration.
 
 ## ECU Allocation
-![SWC Mapping Diagram](https://github.com/tiencao75/Mock_Autosar_Project/blob/main/z6413834761491_68636943e8a1603ebf1fc375b0973de1.jpg?raw=true)
+
+<p align="center">
+  <img src="./img/SWCMappingDiagram.jpg" alt="SWC Mapping Diagram" width="800">
+</p>
 
 - **ECU_01**:
   - Hosts **EngineTemperatureSensor** (Runnables: `GetEngineTemperature`, `GetAirTemperature`).
